@@ -150,7 +150,7 @@ const SkeletonThree = () => {
         backgroundSize: "400% 400%",
       }}
     >
-      <motion.div className="h-full w-full rounded-lg"></motion.div>
+      <motion.div className="h-full w-full rounded-lg">Hello Hi</motion.div>
     </motion.div>
   );
 };
