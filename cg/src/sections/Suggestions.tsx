@@ -1,8 +1,12 @@
 interface SuggestionsProps {
   inputValue: string;
+  onItemClick: (item: string) => void;
 }
 
-const Suggestions: React.FC<SuggestionsProps> = ({ inputValue }) => {
+const Suggestions: React.FC<SuggestionsProps> = ({
+  inputValue,
+  onItemClick,
+}) => {
   const listItems = [
     "A. D. Patel Institute of Technology",
     "A.K.G. Engineering College",
@@ -1419,7 +1423,9 @@ const Suggestions: React.FC<SuggestionsProps> = ({ inputValue }) => {
   const filteredItems = listItems.filter((item) =>
     item.toLowerCase().includes(inputValue.toLowerCase())
   );
-
+  const handleItemClick = (item: string) => {
+    onItemClick(item);
+  };
   return (
     <div
       className={`mt-5 ${
@@ -1429,7 +1435,11 @@ const Suggestions: React.FC<SuggestionsProps> = ({ inputValue }) => {
       {filteredItems.length > 0 ? (
         <ul>
           {filteredItems.slice(0, 6).map((item, index) => (
-            <li key={index} className="text-gray-800 dark:text-gray-200 py-2">
+            <li
+              key={index}
+              className="text-gray-800 dark:text-gray-200 py-2 cursor-pointer"
+              onClick={() => handleItemClick(item)}
+            >
               {item}
             </li>
           ))}

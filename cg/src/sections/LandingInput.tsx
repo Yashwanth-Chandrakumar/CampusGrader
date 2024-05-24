@@ -10,13 +10,21 @@ export function PlaceholdersAndVanishInputDemo() {
     "Let's help one to have his future",
   ];
   const [input, setInput] = useState("");
+  const [selected, setSelected] = useState("");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
+    if (selected !== "") {
+      setSelected(e.target.value);
+    }
     console.log(e.target.value);
   };
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("submitted");
+  };
+  const handleItemClick = (item: string) => {
+    setSelected(item);
+    setInput(item);
   };
   return (
     <div className=" flex flex-col justify-center  items-center px-4">
@@ -24,8 +32,9 @@ export function PlaceholdersAndVanishInputDemo() {
         placeholders={placeholders}
         onChange={handleChange}
         onSubmit={onSubmit}
+        selectedValue={selected}
       />
-      <Suggestions inputValue={input} />
+      <Suggestions inputValue={input} onItemClick={handleItemClick} />
     </div>
   );
 }

@@ -6,10 +6,12 @@ export function PlaceholdersAndVanishInput({
   placeholders,
   onChange,
   onSubmit,
+  selectedValue,
 }: {
   placeholders: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  selectedValue: string;
 }) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
 
@@ -180,7 +182,7 @@ export function PlaceholdersAndVanishInput({
         }}
         onKeyDown={handleKeyDown}
         ref={inputRef}
-        value={value}
+        value={selectedValue !== "" ? selectedValue : value}
         type="text"
         className={cn(
           "w-full relative text-sm sm:text-base z-50 border-none dark:text-white bg-transparent text-black h-full rounded-xl focus:outline-none focus:ring-0 pl-4 sm:pl-5 pr-20",
