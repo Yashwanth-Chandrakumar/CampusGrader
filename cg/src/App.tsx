@@ -1,3 +1,4 @@
+import { BentoGridThirdDemo } from "./sections/Grid";
 import { LandingPage } from "./sections/LandingPage";
 import { NavbarDemo } from "./sections/Navbar";
 
@@ -6,6 +7,7 @@ function App() {
     <>
       <NavbarDemo />
       <LandingPage />
+      <BentoGridThirdDemo />
     </>
   );
 }
