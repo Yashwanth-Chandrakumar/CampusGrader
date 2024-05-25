@@ -1,13 +1,18 @@
-import { BentoGridThirdDemo } from "./sections/Grid";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { LandingPage } from "./sections/LandingPage";
-import { NavbarDemo } from "./sections/Navbar";
+import { LoginFormDemo } from "./sections/Login";
+import { SignupFormDemo } from "./sections/Signup";
 
 function App() {
   return (
     <>
-      <NavbarDemo />
-      <LandingPage />
-      <BentoGridThirdDemo />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/signup" element={<SignupFormDemo />} />
+          <Route path="/login" element={<LoginFormDemo />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }

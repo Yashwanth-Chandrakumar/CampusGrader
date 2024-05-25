@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PlaceholdersAndVanishInput } from "../components/ui/placeholders-and-vanish-input";
 import Suggestions from "./Suggestions";
 
@@ -9,6 +10,7 @@ export function PlaceholdersAndVanishInputDemo() {
     "Why are you still waiting?",
     "Let's help one to have his future",
   ];
+  const navigate = useNavigate();
   const [input, setInput] = useState("");
   const [selected, setSelected] = useState("");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,9 +20,11 @@ export function PlaceholdersAndVanishInputDemo() {
     }
     console.log(e.target.value);
   };
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("submitted");
+    navigate("/login");
   };
   const handleItemClick = (item: string) => {
     setSelected(item);
