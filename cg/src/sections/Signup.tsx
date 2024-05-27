@@ -1,15 +1,30 @@
 "use client";
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { cn } from "../utils/cn";
 
 export function SignupFormDemo() {
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
   const navigate = useNavigate();
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("User registered");
+    axios
+      .post("http://localhost:8080/signup", {
+        Name: name,
+        Email: email,
+        Password: password,
+      })
+      .then((result) => {
+        console.log("User registered");
+        navigate("/login");
+      })
+      .catch((err) => console.log(err));
   };
   return (
     <div className="h-[100vh] flex justify-center items-center">
@@ -26,16 +41,31 @@ export function SignupFormDemo() {
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
               <Label htmlFor="firstname">Name</Label>
-              <Input id="firstname" placeholder="Anonymous duck" type="text" />
+              <Input
+                id="firstname"
+                placeholder="Anonymous duck"
+                type="text"
+                onChange={(e) => setName(e.target.value)}
+              />
             </LabelInputContainer>
           </div>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="email">Email Address</Label>
-            <Input id="email" placeholder="info@secure.com" type="email" />
+            <Input
+              id="email"
+              placeholder="info@secure.com"
+              type="email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" placeholder="••••••••" type="password" />
+            <Input
+              id="password"
+              placeholder="••••••••"
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </LabelInputContainer>
 
           <button

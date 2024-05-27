@@ -13,6 +13,7 @@
     "@clerk/clerk-react": "^5.2.1",
     "@radix-ui/react-label": "^2.0.2",
     "@tabler/icons-react": "^3.5.0",
+    "axios": "^1.7.2",
     "clsx": "^2.1.1",
     "dom": "^0.0.3",
     "framer-motion": "^11.2.6",

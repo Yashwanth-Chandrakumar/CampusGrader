@@ -1,15 +1,27 @@
 "use client";
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { cn } from "../utils/cn";
 
 export function LoginFormDemo() {
+  const [email, setEmail] = useState<string>();
+  const [password, setPassword] = useState<string>();
+
   const navigate = useNavigate();
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("User signed in");
+
+    axios
+      .post("http://localhost:8080/login", { email, password })
+      .then((result) => {
+        console.log(result);
+        navigate("/");
+        console.log("User signed in");
+      })
+      .catch((err) => console.log(err));
   };
   return (
     <div className="h-[100vh] flex justify-center items-center">
@@ -25,11 +37,21 @@ export function LoginFormDemo() {
         <form className="my-8" onSubmit={handleSubmit}>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="email">Email Address</Label>
-            <Input id="email" placeholder="info@secure.com" type="email" />
+            <Input
+              id="email"
+              placeholder="info@secure.com"
+              type="email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" placeholder="••••••••" type="password" />
+            <Input
+              id="password"
+              placeholder="••••••••"
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </LabelInputContainer>
 
           <button
