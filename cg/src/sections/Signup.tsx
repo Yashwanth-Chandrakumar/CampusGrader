@@ -24,7 +24,11 @@ export function SignupFormDemo() {
         console.log("User registered");
         navigate("/login");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        // Display an error message or notification
+        alert("Failed to register. User may already exist.");
+      });
   };
   return (
     <div className="h-[100vh] flex justify-center items-center">

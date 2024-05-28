@@ -21,7 +21,11 @@ export function LoginFormDemo() {
         navigate("/");
         console.log("User signed in");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        // Display an error message or notification
+        alert("Failed to login. Incorrect email or password.");
+      });
   };
   return (
     <div className="h-[100vh] flex justify-center items-center">
