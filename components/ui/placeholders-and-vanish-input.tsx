@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn";
 import { useRouter } from "next/navigation";
+import { listItems } from "../CollegeList";
 
 export function PlaceholdersAndVanishInput({
   placeholders,
@@ -137,7 +138,7 @@ export function PlaceholdersAndVanishInput({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !animating) {
+    if (e.key === "Enter" && !animating && college!="") {
       vanishAndSubmit();
     }
   };
@@ -158,9 +159,15 @@ export function PlaceholdersAndVanishInput({
   const router = useRouter();
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push("/auth/login");
-    vanishAndSubmit();
-    onSubmit && onSubmit(e);
+    if(college!=""){
+      router.push("/auth/login");
+      vanishAndSubmit();
+      onSubmit && onSubmit(e);
+      console.log("college entered")
+    }
+    else{
+      console.log("No input")
+    }
   };
   return (
     <form

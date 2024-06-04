@@ -15,7 +15,7 @@ export function PlaceholdersAndVanishInputDemo() {
   const [selected, setSelected] = useState("");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
-    if (selected !== "") {
+    if (!selected) {
       setSelected(e.target.value);
     }
     console.log(e.target.value);
@@ -28,6 +28,7 @@ export function PlaceholdersAndVanishInputDemo() {
   const handleItemClick = (item: string) => {
     setSelected(item);
     setInput(item);
+
   };
   return (
     <div className=" flex flex-col justify-center  items-center px-4">
