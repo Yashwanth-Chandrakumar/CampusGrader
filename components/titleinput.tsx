@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Suggestions from "./ui/college-suggestion";
 import { PlaceholdersAndVanishInput } from "./ui/placeholders-and-vanish-input";
-
+import { listItems } from "./CollegeList";
 export function PlaceholdersAndVanishInputDemo() {
   const placeholders = [
     "Find by course name.",
@@ -33,11 +33,12 @@ export function PlaceholdersAndVanishInputDemo() {
   return (
     <div className=" flex flex-col justify-center  items-center px-4">
       <PlaceholdersAndVanishInput
+        college={input}
         placeholders={placeholders}
         onChange={handleChange}
         onSubmit={onSubmit}
       />
-      <Suggestions inputValue={input} onItemClick={handleItemClick}/>
+      <Suggestions listItems={listItems} inputValue={input} onItemClick={handleItemClick}/>
     </div>
   );
 }
