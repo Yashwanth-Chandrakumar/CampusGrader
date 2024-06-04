@@ -1,4 +1,3 @@
-"use client";
 
 import { useState } from "react";
 import Suggestions from "./ui/college-suggestion";
