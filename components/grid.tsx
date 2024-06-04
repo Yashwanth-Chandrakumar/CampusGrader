@@ -7,7 +7,6 @@ import {
     IconTableColumn,
   } from "@tabler/icons-react";
   import { motion } from "framer-motion";
-  import privacy from "../../public/security-concept-illustration_114360-5476-removebg-preview.png";
   import { BentoGrid, BentoGridItem } from "../components/ui/bento-grid";
   import { cn } from "../utils/cn";
   import Image from 'next/image';
@@ -219,7 +218,7 @@ import {
             className="rounded-full h-10 w-10"
           />
           <p className="sm:text-sm text-xs text-center font-semibold text-neutral-500 mt-4">
-            I'd love a good study culture
+            I&apos;d love a good study culture
           </p>
           <p className="border border-green-500 bg-green-100 dark:bg-green-900/20 text-green-600 text-xs rounded-full px-2 py-0.5 mt-4">
             Sensible
