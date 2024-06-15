@@ -1377,7 +1377,6 @@ export const listItems = [
     "Akshaya College of Engineering and Technology",
     "Sree Sakthi Engineering College",
     "Muthoot Institute of Technology and Science",
-    "Indian Institute of Information Technology",
     "Ramco Institute of Technology",
     "Dhirajlal Gandhi College of Technology",
     "Velammal College Of Engineering and Technology",

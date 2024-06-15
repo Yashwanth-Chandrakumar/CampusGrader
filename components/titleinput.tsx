@@ -1,8 +1,8 @@
 
 import { useState } from "react";
+import { listItems } from "./CollegeList";
 import Suggestions from "./ui/college-suggestion";
 import { PlaceholdersAndVanishInput } from "./ui/placeholders-and-vanish-input";
-import { listItems } from "./CollegeList";
 export function PlaceholdersAndVanishInputDemo() {
   const placeholders = [
     "Find by course name.",
@@ -18,7 +18,6 @@ export function PlaceholdersAndVanishInputDemo() {
     if (!selected) {
       setSelected(e.target.value);
     }
-    console.log(e.target.value);
   };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {

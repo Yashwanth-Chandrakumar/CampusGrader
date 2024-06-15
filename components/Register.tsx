@@ -1,14 +1,12 @@
 "use client";
-import React from "react";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/utils/cn";
 import {
-  IconBrandGithub,
-  IconBrandGoogle,
-  IconBrandOnlyfans,
+  IconBrandGoogle
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+import React from "react";
 
 export default function SignupFormDemo() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -76,7 +74,7 @@ export default function SignupFormDemo() {
       <button onClick={() => router.push('/auth/login')} type="button"
           className="relative group/btn flex dark:text-white space-x-2 items-center justify-center px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
         >
-          Sign in &rarr;
+          Sign in 
           <BottomGradient />
         </button>
           
