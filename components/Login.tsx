@@ -28,8 +28,10 @@ export default function SigninFormDemo() {
         email,password,redirect:false,
       });
 
-      if (res.error){
+      if (res){
+        if (res.error){
         setError("Invalid Credentials")
+        }
       }
       else{
         console.log("Login Successfull")
