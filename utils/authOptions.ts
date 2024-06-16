@@ -4,6 +4,10 @@ import bcrypt from "bcryptjs";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+interface Credentials {
+    email: string;
+    password: string;
+  }
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -12,7 +16,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {},
 
       async authorize(credentials) {
-        const { email, password } = credentials;
+        const { email, password } = credentials as Credentials;
 
         try {
           await connectMongoDB();
@@ -45,7 +49,7 @@ export const authOptions: NextAuthOptions = {
       console.log("User: ", user);
       console.log("Account: ", account);
       const { name, email } = user;
-      if (account.provider === "google") {
+      if (account && account.provider === "google") {
         try {
           const res = await fetch("http://localhost:3000/api/google", {
             method: "POST",
