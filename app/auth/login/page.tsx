@@ -1,9 +1,12 @@
+"use client"
+
 import SigninFormDemo from '@/components/Login'
-import React from 'react'
+import { SessionProvider } from 'next-auth/react'
 
 const page = () => {
   return (
-    <SigninFormDemo/>
+    <SessionProvider>
+    <SigninFormDemo/></SessionProvider>
   )
 }
 
