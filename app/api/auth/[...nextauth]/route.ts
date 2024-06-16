@@ -29,7 +29,7 @@ export const authOptions = {
 
           return user;
         } catch (error) {
-          console.log("Error: ", error);
+          console.log("Error manual login: ", error);
           throw error;
         }
       },
@@ -46,7 +46,7 @@ export const authOptions = {
         const {name,email} = user;
         if(account.provider==="google"){
             try {
-                const res = await fetch('http://localhost:3000/auth/register/api/google',{
+                const res = await fetch('http://localhost:3000/api/google',{
                     method:"POST",
                     headers:{
                         "Content-Type":"applications/json",
