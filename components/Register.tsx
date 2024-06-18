@@ -3,9 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/utils/cn";
 import { IconBrandGoogle } from "@tabler/icons-react";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default  function SignupFormDemo() {
   const [name, setName] = useState("");
@@ -19,10 +19,16 @@ export default  function SignupFormDemo() {
     setError("");
   };
   const router = useRouter();
+  const {data:session,status} = useSession();
+  useEffect(() => {
+    // Redirect if the user is already authenticated
+    if (status === "authenticated") {
+      router.push("/view");
+    }
+  }, [status]);
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted");
-
     // Perform validation and set the error state if needed
     if (!name || !email || !password) {
       setError("Please enter all fields");
