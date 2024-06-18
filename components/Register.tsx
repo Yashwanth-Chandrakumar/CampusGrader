@@ -18,6 +18,7 @@ export default  function SignupFormDemo() {
     setPassword("");
     setError("");
   };
+  const router = useRouter();
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted");
@@ -59,7 +60,7 @@ export default  function SignupFormDemo() {
       });
       if(res.ok){
         resetForm();
-        
+        router.push("/auth/login");
       }
       else{
         console.log("User register failed")
@@ -71,7 +72,7 @@ export default  function SignupFormDemo() {
 
   
 
-  const router = useRouter();
+  
   return (
     <div className="h-screen w-full flex justify-center items-center">
       <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">

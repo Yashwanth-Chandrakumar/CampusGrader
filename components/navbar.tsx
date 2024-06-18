@@ -1,6 +1,4 @@
 "use client";
-import { IconMoon, IconSun } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
 import {
   HoveredLink,
   Menu,
@@ -8,6 +6,8 @@ import {
   ProductItem,
 } from "@/components/ui/navbar-menu";
 import { cn } from "@/utils/cn";
+import { IconMoon, IconSun } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 
 export default function NavbarDemo() {
   return (
@@ -19,15 +19,18 @@ export default function NavbarDemo() {
 
 function Navbar({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  
+  // Initialize the dark mode state based on what's stored in localStorage
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem("theme") === "dark";
+  });
 
   useEffect(() => {
     const body = document.body;
-    if (isDarkMode) {
-      body.classList.add("dark");
-    } else {
-      body.classList.remove("dark");
-    }
+    // Apply the theme class to the body based on isDarkMode state
+    body.classList.toggle("dark", isDarkMode);
+    // Store the current theme in localStorage
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
   }, [isDarkMode]);
 
   const toggleTheme = () => {
