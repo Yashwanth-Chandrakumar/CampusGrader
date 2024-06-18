@@ -46,9 +46,6 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account }) {
-      console.log("User: ", user);
-      console.log("Account: ", account);
-      const { name, email } = user;
       if (account && account.provider === "google") {
         try {
           const res = await fetch("http://localhost:3000/api/google", {
@@ -56,20 +53,18 @@ export const authOptions: NextAuthOptions = {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              name,
-              email,
-            }),
+            body: JSON.stringify({ name: user.name, email: user.email }),
           });
-          if (res.ok) {
-            return true;
-          }
+          if (!res.ok) throw new Error('Failed to process the user data with Google account.');
+          return true; // If the API handles the user correctly, we proceed.
         } catch (error) {
-          console.log(error);
+          console.error('SignIn error with Google provider:', error);
+          return false; // Prevent login if there's an error.
         }
       }
-      return true;
+      return true; // For other providers or credentials, proceed normally.
     },
+    
   },
   session: {
     strategy: "jwt",
