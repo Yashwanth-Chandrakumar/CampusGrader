@@ -12,7 +12,8 @@ export default function SigninFormDemo() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // Add this line to create an error state
   const {status,data:session} = useSession();
-
+  
+  const router = useRouter();
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted");
@@ -32,9 +33,10 @@ export default function SigninFormDemo() {
         if (res.error){
         setError("Invalid Credentials")
         }
-      }
-      else{
-        console.log("Login Successfull")
+        else{
+          console.log("Login Successfull")
+          router.push("/view")
+        }
       }
     } catch (error) {
       console.log("Login error")
@@ -42,7 +44,6 @@ export default function SigninFormDemo() {
 
   };
 
-  const router = useRouter();
 
   return (
     <div className="h-screen w-full flex justify-center items-center">

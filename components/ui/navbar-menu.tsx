@@ -1,8 +1,8 @@
 "use client";
-import React from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
 const transition = {
   type: "spring",
@@ -17,20 +17,22 @@ export const MenuItem = ({
   setActive,
   active,
   item,
+  icon,
   children,
 }: {
   setActive: (item: string) => void;
   active: string | null;
   item: string;
+  icon?:React.ReactNode;
   children?: React.ReactNode;
 }) => {
   return (
     <div onMouseEnter={() => setActive(item)} className="relative ">
       <motion.p
         transition={{ duration: 0.3 }}
-        className="cursor-pointer text-black hover:opacity-[0.9] dark:text-white"
+        className={`cursor-pointer text-black hover:opacity-[0.9] dark:text-white`}
       >
-        {item}
+        {item==""?icon:item}
       </motion.p>
       {active !== null && (
         <motion.div
@@ -106,6 +108,24 @@ export const ProductItem = ({
         </p>
       </div>
     </Link>
+  );
+};
+export const ProfileItem = ({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) => {
+  return (
+      <div>
+        <h4 className="text-xl font-bold mb-1 text-black dark:text-white">
+          {title}
+        </h4>
+        <p className="text-neutral-700 text-sm max-w-[10rem] dark:text-neutral-300">
+          {description}
+        </p>
+      </div>
   );
 };
 

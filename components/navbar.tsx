@@ -4,39 +4,50 @@ import {
   Menu,
   MenuItem,
   ProductItem,
+  ProfileItem,
 } from "@/components/ui/navbar-menu";
 import { cn } from "@/utils/cn";
-import { IconMoon, IconSun } from "@tabler/icons-react";
+import { IconMoon, IconSun, IconUser } from "@tabler/icons-react";
+import { SessionProvider, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function NavbarDemo() {
   return (
+    <SessionProvider>
     <div className="relative w-full flex items-center justify-center">
       <Navbar className="top-6" />
     </div>
+    </SessionProvider> 
   );
 }
 
 function Navbar({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
-  
-  // Initialize the dark mode state based on what's stored in localStorage
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem("theme") === "dark";
-  });
+  const [isDarkMode, setIsDarkMode] = useState<boolean | undefined>(undefined);  // Initially undefined
 
   useEffect(() => {
+    // Set the initial theme based on localStorage only once when the component mounts
+    const storedTheme = localStorage.getItem("theme") === "dark";
+    setIsDarkMode(storedTheme);
+
     const body = document.body;
-    // Apply the theme class to the body based on isDarkMode state
-    body.classList.toggle("dark", isDarkMode);
-    // Store the current theme in localStorage
-    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+    // Toggle class on body based on the theme
+    body.classList.toggle("dark", storedTheme);
+  }, []);
+
+  useEffect(() => {
+    if (isDarkMode !== undefined) {
+      // Update localStorage and class on body when isDarkMode changes, avoiding this on initial render
+      localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+      document.body.classList.toggle("dark", isDarkMode);
+    }
   }, [isDarkMode]);
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
 
+  const { data: session, status } = useSession();
   return (
     <div
       className={cn("fixed top-10 inset-x-0 max-w-2xl mx-auto z-50", className)}
@@ -92,6 +103,13 @@ function Navbar({ className }: { className?: string }) {
             <HoveredLink href="/enterprise">Enterprise</HoveredLink>
           </div>
         </MenuItem>
+        {session && session.user &&
+          <MenuItem setActive={setActive} active={active} item="" icon={<IconUser />} >
+            <ProfileItem title={session.user.name ?? 'No Name'} description={session.user.email ?? 'No Email'} />
+          </MenuItem>
+        }
+        
+          
       </Menu>
     </div>
   );
