@@ -8,9 +8,8 @@ import {
 } from "@/components/ui/navbar-menu";
 import { cn } from "@/utils/cn";
 import { IconMoon, IconSun, IconUser } from "@tabler/icons-react";
-import { SessionProvider, useSession } from "next-auth/react";
+import { SessionProvider, signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-
 export default function NavbarDemo() {
   return (
     <SessionProvider>
@@ -106,6 +105,13 @@ function Navbar({ className }: { className?: string }) {
         {session && session.user &&
           <MenuItem setActive={setActive} active={active} item="" icon={<IconUser />} >
             <ProfileItem title={session.user.name ?? 'No Name'} description={session.user.email ?? 'No Email'} />
+            <button
+            className="bg-gradient-to-br relative group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+            type="submit"
+            onClick={()=>{signOut()}}
+            >
+            Sign out
+          </button>
           </MenuItem>
         }
         
