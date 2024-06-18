@@ -23,7 +23,9 @@ const Landingpage = ()=>{
         redirect("/auth/login")
     }
     return (<>
-    <p>Hwllo</p>
+    <div className="mt-5">
+        Hello
+    </div>
     </>)
 }
 

@@ -1,4 +1,5 @@
 
+import { SessionProvider } from "next-auth/react";
 import { useState } from "react";
 import { listItems } from "./CollegeList";
 import Suggestions from "./ui/college-suggestion";
@@ -31,12 +32,14 @@ export function PlaceholdersAndVanishInputDemo() {
   };
   return (
     <div className=" flex flex-col justify-center  items-center px-4">
+      <SessionProvider>
       <PlaceholdersAndVanishInput
         college={input}
         placeholders={placeholders}
         onChange={handleChange}
         onSubmit={onSubmit}
       />
+      </SessionProvider>
       <Suggestions listItems={listItems} inputValue={input} onItemClick={handleItemClick}/>
     </div>
   );

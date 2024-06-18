@@ -2,9 +2,9 @@
 
 import { cn } from "@/utils/cn";
 import { AnimatePresence, motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-
 export function PlaceholdersAndVanishInput({
   placeholders,
   college,
@@ -142,14 +142,18 @@ export function PlaceholdersAndVanishInput({
     }
   };
 
-  
+  const {data:session,status} = useSession();
   const router = useRouter();
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(college!=""){
+      if(status==="unauthenticated"){
       router.push("/auth/login");
       onSubmit && onSubmit(e);
-      console.log("college entered")
+      console.log("college entered")}
+      else{
+        router.push("/view");
+      }
     }
     else{
       console.log("No input")
