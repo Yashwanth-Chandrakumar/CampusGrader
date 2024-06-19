@@ -3,38 +3,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/utils/cn";
 import { IconBrandGoogle } from "@tabler/icons-react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 export default  function SignupFormDemo() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
+  const [showOtp,setShowOtp] = useState(false)
   const resetForm = () => {
     setName("");
     setEmail("");
     setPassword("");
+    setShowOtp(false);
+    setOtp("");
     setError("");
   };
   const router = useRouter();
-  const {data:session,status} = useSession();
-  useEffect(() => {
-    // Redirect if the user is already authenticated
-    if (status === "authenticated") {
-      router.push("/view");
-    }
-  }, [status]);
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted");
-    // Perform validation and set the error state if needed
     if (!name || !email || !password) {
       setError("Please enter all fields");
     } else {
-      setError(""); // Clear the error state
-      // You can perform additional logic here, like submitting the form data
+      setError(""); 
     }
 
     try {
@@ -54,29 +49,46 @@ export default  function SignupFormDemo() {
         return;
       }
 
-
-      const res = await fetch ("/api/register",{
-        method: "POST",
-        headers:{
-          "Content-Type":"application/json",
-        },
-        body:JSON.stringify({
-          name,email,password,
-        }),
-      });
-      if(res.ok){
-        resetForm();
-        router.push("/auth/login");
-      }
-      else{
-        console.log("User register failed")
-      }
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      localStorage.setItem("userDetails", JSON.stringify({ name, email, password}));
+      localStorage.setItem("otp",otp.toString())
+      setShowOtp(true)
     } catch (error) {
       console.log("Error during registeration", error);
     }
   };
 
-  
+  const verifyOtp = async() => {
+        const storedOtp = localStorage.getItem("otp");
+        if ( storedOtp && storedOtp === otp) {
+            console.log("OTP verified successfully");
+            try {
+              const res = await fetch ("/api/register",{
+                method: "POST",
+                headers:{
+                  "Content-Type":"application/json",
+                },
+                body:JSON.stringify({
+                  name,email,password,
+                }),
+              });
+              if(res.ok){
+                resetForm();
+                router.push("/auth/login");
+              }
+              else{
+                console.log("User register failed")
+              }
+            } catch (error) {
+              console.log("Error during registeration", error);
+            }
+            localStorage.removeItem("otp");
+            localStorage.removeItem("userDetails");
+            router.push("/auth/login");
+        } else {
+            setError("Invalid OTP, please try again.");
+        }
+    };
 
   
   return (
@@ -90,47 +102,32 @@ export default  function SignupFormDemo() {
         </p>
 
         <form className="my-8" onSubmit={handleSubmit}>
-          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
-            <LabelInputContainer>
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                placeholder="Tyler"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </LabelInputContainer>
-          </div>
-          <LabelInputContainer className="mb-4">
-            <Label htmlFor="email">Email Address</Label>
-            <Input
-              id="email"
-              placeholder="projectmayhem@fc.com"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </LabelInputContainer>
-          <LabelInputContainer className="mb-4">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              placeholder="••••••••"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </LabelInputContainer>
 
-
-          <button
-            className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-            type="submit"
-            >
-            Sign up &rarr;
-            <BottomGradient />
-          </button>
+          {!showOtp ? (
+                        <>
+                            <LabelInputContainer className="mb-4">
+                                <Label htmlFor="name">Name</Label>
+                                <Input id="name" placeholder="Tyler" type="text" value={name} onChange={(e) => setName(e.target.value)} />
+                            </LabelInputContainer>
+                            <LabelInputContainer className="mb-4">
+                                <Label htmlFor="email">Email Address</Label>
+                                <Input id="email" placeholder="projectmayhem@fc.com" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                            </LabelInputContainer>
+                            <LabelInputContainer className="mb-4">
+                                <Label htmlFor="password">Password</Label>
+                                <Input id="password" placeholder="••••••••" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                            </LabelInputContainer>
+                            <button type="submit" className="bg-gradient-to-br from-black to-neutral-600 w-full text-white rounded-md h-10">Sign up &rarr;</button>
+                        </>
+                    ) : (
+                        <>
+                            <LabelInputContainer className="mb-4">
+                                <Label htmlFor="otp">OTP</Label>
+                                <Input id="otp" placeholder="Enter OTP" type="text" value={otp} onChange={(e) => setOtp(e.target.value)} />
+                            </LabelInputContainer>
+                            <button onClick={verifyOtp} className="bg-gradient-to-br from-black to-neutral-600 w-full text-white rounded-md h-10">Verify OTP</button>
+                        </>
+                    )}
             {error && <p className="text-red-600 text-center text-m max-w-sm pt-4 dark:text-red-600">{error}</p>}
 
           <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />

@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/utils/cn";
 import { IconBrandGoogle } from "@tabler/icons-react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
@@ -11,16 +11,8 @@ export default function SigninFormDemo() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // Add this line to create an error state
-  const {status,data:session} = useSession();
   const router = useRouter();
-  
-  // useEffect(() => {
-  //   // Redirect if the user is already authenticated
-  //   if (status === "authenticated") {
-  //     console.log("MOVING")
-  //     router.push("/view");
-  //   }
-  // }, [status]);
+
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted");
