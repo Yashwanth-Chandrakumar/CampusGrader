@@ -9,6 +9,7 @@ import {
 import { cn } from "@/utils/cn";
 import { IconMoon, IconSun, IconUser } from "@tabler/icons-react";
 import { SessionProvider, signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 export default function NavbarDemo() {
   return (
@@ -23,7 +24,7 @@ export default function NavbarDemo() {
 function Navbar({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState<boolean | undefined>(undefined);  // Initially undefined
-
+  const router = useRouter()
   useEffect(() => {
     // Set the initial theme based on localStorage only once when the component mounts
     const storedTheme = localStorage.getItem("theme") === "dark";
@@ -108,7 +109,10 @@ function Navbar({ className }: { className?: string }) {
             <button
             className="bg-gradient-to-br relative group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
             type="submit"
-            onClick={()=>{signOut()}}
+            onClick={()=>{
+              signOut({redirect:false})
+              router.push("/auth/login")
+            }}
             >
             Sign out
           </button>

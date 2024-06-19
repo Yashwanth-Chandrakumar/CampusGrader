@@ -1,7 +1,6 @@
 "use client"
 
-import { SessionProvider, useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { SessionProvider } from "next-auth/react";
 
 const MainLand = () => {
 
@@ -18,10 +17,10 @@ const MainLand = () => {
 }
 
 const Landingpage = ()=>{
-    const { data: session, status } = useSession();
-    if(status==="unauthenticated"){
-        redirect("/auth/login")
-    }
+    // const { data: session, status } = useSession();
+    // if(status==="unauthenticated"){
+    //     redirect("/auth/login")
+    // }
     return (<>
      <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
       <div className="w-full max-w-md">

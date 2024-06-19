@@ -66,6 +66,7 @@ export const authOptions: NextAuthOptions = {
       return true; // For other providers or credentials, proceed normally.
     },
     async redirect({ url, baseUrl }) {
+      
       return baseUrl + '/view';
     },
   },
