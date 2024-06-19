@@ -13,7 +13,8 @@ export default  function SignupFormDemo() {
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
-  const [showOtp,setShowOtp] = useState(false)
+  const [showOtp,setShowOtp] = useState(false);
+  const [serverOtp,setServerOtp] = useState("");
   const resetForm = () => {
     setName("");
     setEmail("");
@@ -25,6 +26,7 @@ export default  function SignupFormDemo() {
   const router = useRouter();
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     console.log("Form submitted");
     if (!name || !email || !password) {
       setError("Please enter all fields");
@@ -33,36 +35,45 @@ export default  function SignupFormDemo() {
     }
 
     try {
-        const exist = await fetch("/api/login",{
-          method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
+      
+      const otpback = Math.floor(100000 + Math.random() * 900000).toString();
+      setServerOtp(otpback)
 
-        })
+      const sendOtpRes = await fetch('/api/otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp:otpback }),
+      });
 
-        const { user } = await exist.json();
-
-      if (user) {
-        setError("User already exists.");
-        return;
+      if (sendOtpRes.ok) {
+        setShowOtp(true);
+        setError('');
+      } else {
+        const data = await sendOtpRes.json();
+        setError(data.error || "Failed to send OTP.");
       }
-
-      const otp = Math.floor(100000 + Math.random() * 900000);
-      localStorage.setItem("userDetails", JSON.stringify({ name, email, password}));
-      localStorage.setItem("otp",otp.toString())
-      setShowOtp(true)
-    } catch (error) {
-      console.log("Error during registeration", error);
+    } catch (err) {
+      console.error("Error during registration:", err);
+      setError("An unexpected error occurred. Please try again.");
     }
   };
 
   const verifyOtp = async() => {
-        const storedOtp = localStorage.getItem("otp");
-        if ( storedOtp && storedOtp === otp) {
+        if ( serverOtp === otp) {
             console.log("OTP verified successfully");
             try {
+
+              const existRes = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+              });
+              const { user } = await existRes.json();
+              if (user) {
+                setError("User already exists.");
+                return;
+              }
+
               const res = await fetch ("/api/register",{
                 method: "POST",
                 headers:{
@@ -82,9 +93,7 @@ export default  function SignupFormDemo() {
             } catch (error) {
               console.log("Error during registeration", error);
             }
-            localStorage.removeItem("otp");
-            localStorage.removeItem("userDetails");
-            router.push("/auth/login");
+            
         } else {
             setError("Invalid OTP, please try again.");
         }
@@ -117,15 +126,17 @@ export default  function SignupFormDemo() {
                                 <Label htmlFor="password">Password</Label>
                                 <Input id="password" placeholder="••••••••" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                             </LabelInputContainer>
-                            <button type="submit" className="bg-gradient-to-br from-black to-neutral-600 w-full text-white rounded-md h-10">Sign up &rarr;</button>
+                            <button type="submit" className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]">Sign up &rarr;
+                            <BottomGradient/></button>
                         </>
                     ) : (
                         <>
                             <LabelInputContainer className="mb-4">
                                 <Label htmlFor="otp">OTP</Label>
                                 <Input id="otp" placeholder="Enter OTP" type="text" value={otp} onChange={(e) => setOtp(e.target.value)} />
+                                
                             </LabelInputContainer>
-                            <button onClick={verifyOtp} className="bg-gradient-to-br from-black to-neutral-600 w-full text-white rounded-md h-10">Verify OTP</button>
+                            <button onClick={verifyOtp} type="button" className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]">Verify OTP<BottomGradient/></button>
                         </>
                     )}
             {error && <p className="text-red-600 text-center text-m max-w-sm pt-4 dark:text-red-600">{error}</p>}
