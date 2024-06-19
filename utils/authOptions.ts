@@ -4,10 +4,11 @@ import bcrypt from "bcryptjs";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+
 interface Credentials {
     email: string;
     password: string;
-  }
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -64,7 +65,9 @@ export const authOptions: NextAuthOptions = {
       }
       return true; // For other providers or credentials, proceed normally.
     },
-    
+    async redirect({ url, baseUrl }) {
+      return baseUrl + '/view';
+    },
   },
   session: {
     strategy: "jwt",
@@ -74,4 +77,3 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/login",
   },
 };
-
