@@ -19,18 +19,18 @@ const MainLand = () => {
 
 const Landingpage = ()=>{
     
-    return (<div className="flex flex-col items-center min-h-screen py-2 bg-gray-100 ">
+    return (<div className="flex flex-col items-center min-h-screen py-2  bg-zinc-50 dark:bg-zinc-900 ">
       <div className="w-full max-w-4xl mt-40">
       <PlaceholdersAndVanishInputDemo navUrl="college"/>
       </div>
       <div className="w-full max-w-4xl mt-10">
-        <section className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-2xl font-semibold mb-4">Top Colleges in Your Area</h2>
-          <p>Content for top colleges in your area...</p>
+        <section className="mt-5 bg-white dark:bg-zinc-800 rounded-lg shadow-md p-4">
+          <h2 className="text-gray-800 dark:text-gray-200 py-2 font-bold">Top Colleges in Your Area</h2>
+          <p className="text-gray-800 dark:text-gray-200">Content for top colleges in your area...</p>
         </section>
-        <section className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4">Most Viewed Colleges</h2>
-          <p>Content for most viewed colleges...</p>
+        <section className="mt-5 bg-white dark:bg-zinc-800 rounded-lg shadow-md p-4">
+          <h2 className="text-gray-800 dark:text-gray-200 py-2 font-bold">Most Viewed Colleges</h2>
+          <p className="text-gray-800 dark:text-gray-200">Content for most viewed colleges...</p>
         </section>
       </div>
     </div>)
