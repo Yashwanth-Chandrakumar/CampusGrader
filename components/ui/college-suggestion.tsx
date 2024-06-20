@@ -19,7 +19,7 @@ interface SuggestionsProps {
     };
     return (
       <div
-        className={`mt-5 ${
+        className={`mt-5 mb-5 ${
           inputValue === "" ? "hidden" : "-mb-10"
         } bg-white dark:bg-zinc-800 rounded-lg shadow-md p-4`}
       >

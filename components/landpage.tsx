@@ -1,10 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import React from "react";
-import { AuroraBackground } from "./ui/aurora-background";
-import { PlaceholdersAndVanishInput } from "./ui/placeholders-and-vanish-input";
 import { PlaceholdersAndVanishInputDemo } from "./titleinput";
+import { AuroraBackground } from "./ui/aurora-background";
 
 export default function AuroraBackgroundDemo() {
   return (
@@ -25,7 +23,7 @@ export default function AuroraBackgroundDemo() {
         <div className="font-extralight text-base md:text-4xl dark:text-neutral-200 py-4">
           Maybe, his life too.
         </div>
-        <PlaceholdersAndVanishInputDemo/>
+        <PlaceholdersAndVanishInputDemo navUrl="/auth/login"/>
         {/* <button className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2">
           Debug now
         </button> */}
