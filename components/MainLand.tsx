@@ -20,7 +20,7 @@ const MainLand = () => {
 const Landingpage = ()=>{
     
     return (<div className="flex flex-col items-center min-h-screen py-2  bg-zinc-50 dark:bg-zinc-900 ">
-      <div className="w-full max-w-4xl mt-40">
+      <div className="w-full max-w-4xl mt-32">
       <PlaceholdersAndVanishInputDemo navUrl="college"/>
       </div>
       <div className="w-full max-w-4xl mt-10">
