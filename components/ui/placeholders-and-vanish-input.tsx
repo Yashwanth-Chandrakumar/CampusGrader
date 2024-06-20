@@ -10,13 +10,11 @@ export function PlaceholdersAndVanishInput({
   college,
   onChange,
   onSubmit,
-  nextUrl,
 }: {
   placeholders: string[];
   college:string,
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  nextUrl: string;
 }) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
   
@@ -140,7 +138,19 @@ export function PlaceholdersAndVanishInput({
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !animating && college!="") {
-      
+      if(college!=""){
+        localStorage.setItem("searchedCollege",college)
+        if(status==="unauthenticated"){
+        router.push("/auth/login");
+        onSubmit;
+        console.log("college entered")}
+        else{
+          router.push("/view");
+        }
+      }
+      else{
+        console.log("No input")
+      }
     }
   };
 
@@ -149,6 +159,7 @@ export function PlaceholdersAndVanishInput({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(college!=""){
+      localStorage.setItem("searchedCollege",college)
       if(status==="unauthenticated"){
       router.push("/auth/login");
       onSubmit && onSubmit(e);
@@ -200,7 +211,6 @@ export function PlaceholdersAndVanishInput({
         <button
           type="submit"
           disabled={!value}
-          onClick={() => router.push(nextUrl)}
           className="absolute cursor-pointer right-2 top-1/2 z-40 -translate-y-1/2 h-8 w-8 rounded-full disabled:bg-gray-100 bg-black dark:bg-zinc-900 dark:disabled:bg-zinc-800 transition duration-200 flex items-center justify-center"
         >
           <motion.svg
