@@ -4,7 +4,7 @@ import { useState } from "react";
 import { listItems } from "./CollegeList";
 import Suggestions from "./ui/college-suggestion";
 import { PlaceholdersAndVanishInput } from "./ui/placeholders-and-vanish-input";
-export function PlaceholdersAndVanishInputDemo({navUrl}: Readonly<{navUrl: string;}>) {
+export function PlaceholdersAndVanishInputDemo() {
   const placeholders = [
     "Find by course name.",
     "Rate the college you studied.",
@@ -43,7 +43,6 @@ export function PlaceholdersAndVanishInputDemo({navUrl}: Readonly<{navUrl: strin
           placeholders={placeholders}
           onChange={handleChange}
           onSubmit={onSubmit}
-          nextUrl={navUrl}
         />
       </SessionProvider>
       <Suggestions listItems={listItems} inputValue={input} onItemClick={handleItemClick} isActive={isActive}/>
