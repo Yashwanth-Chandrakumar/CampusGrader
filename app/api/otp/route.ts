@@ -7,8 +7,8 @@ export async function POST(req: Request) {
     console.log(email+" "+otp+"--")
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com", // SMTP server address
-      port: 465, // SMTP server port
-      secure: true, // Use SSL/TLS
+      port: 587, // SMTP server port
+      secure: false, // Use SSL/TLS
       auth: {
         user: process.env.EMAIL, // Your email address
         pass: process.env.EMAIL_PASSWORD, // Your email password
