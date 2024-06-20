@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/utils/cn";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
@@ -105,14 +106,16 @@ export default function SigninFormDemo() {
           <p className="text-neutral-600 text-center text-sm max-w-sm pb-2 dark:text-neutral-300">
             New user
           </p>
+          <Link href="/auth/register">
           <button
-            onClick={() => router.push("/auth/register")}
+            // onClick={() => router.push("/auth/register")}
             type="button"
             className="relative group/btn flex space-x-2 items-center justify-center px-4 w-full text-black dark:text-white rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
           >
             Sign up
             <BottomGradient />
           </button>
+          </Link>
         </form>
       </div>
     </div>
