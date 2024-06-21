@@ -1,7 +1,7 @@
 import { KeyboardEvent, useEffect, useState } from 'react';
 import styles from './Rating.module.css';
 import { RatingProps } from './Rating.props';
-import Star from './Star'; // Make sure this path is correct
+import Star from './Star';
 
 const Rating = ({
   isEditable = false,
@@ -14,9 +14,13 @@ const Rating = ({
 
   const constructRating = (currentRating: number) => {
     const updatedArray = ratingArray.map((_, idx: number) => {
+      const isFilled = idx < Math.floor(currentRating);
+      const isHalfFilled = !isFilled && idx < currentRating;
+
       return (
         <Star
-          isFilled={idx < currentRating}
+          isFilled={isFilled}
+          isHalfFilled={isHalfFilled}
           key={idx}
           onMouseEnter={() => hoverHandle(idx + 1)}
           onMouseLeave={() => hoverHandle(rating)}
