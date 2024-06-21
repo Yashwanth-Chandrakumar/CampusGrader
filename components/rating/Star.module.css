@@ -1,0 +1,10 @@
+.star {
+    cursor: pointer;
+    transition: color 200ms;
+  }
+  
+  .starSvg {
+    width: 24px;
+    height: 24px;
+  }
+  
