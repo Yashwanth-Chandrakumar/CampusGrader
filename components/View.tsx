@@ -11,7 +11,7 @@ const View = ({college}:{college:string;}) => {
         <NavbarDemo/>
         <div className="w-full max-w-7xl mt-10 p-10">
         <h1 className="text-2xl">{college}</h1>
-        <Rating isEditable={true} rating={userRating} setRating={setUserRating} />
+        <Rating isEditable={false} rating={4} setRating={setUserRating} />
         <p>{userRating}</p>
         </div>
     </div>
