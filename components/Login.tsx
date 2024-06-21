@@ -34,7 +34,7 @@ export default function SigninFormDemo() {
         }
         else{
           console.log("Login Successfull")
-          router.push("/view")
+          router.push("/home")
         }
       }
     } catch (error) {

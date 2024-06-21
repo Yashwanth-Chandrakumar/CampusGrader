@@ -145,7 +145,7 @@ export function PlaceholdersAndVanishInput({
         onSubmit;
         console.log("college entered")}
         else{
-          router.push("/view");
+          router.push("/home");
         }
       }
       else{
@@ -165,7 +165,7 @@ export function PlaceholdersAndVanishInput({
       onSubmit && onSubmit(e);
       console.log("college entered")}
       else{
-        router.push("/view");
+        router.push("/home");
       }
     }
     else{

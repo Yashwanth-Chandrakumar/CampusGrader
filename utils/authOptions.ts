@@ -67,7 +67,7 @@ export const authOptions: NextAuthOptions = {
     },
     async redirect({ url, baseUrl }) {
       
-      return baseUrl + '/view';
+      return baseUrl + '/home';
     },
   },
   session: {
