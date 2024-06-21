@@ -1,93 +1,132 @@
-"use client";
+"use client"
 
-import { useState } from 'react';
+import { useRouter } from "next/navigation";
+import React, { useState } from 'react';
 
-interface Review {
+type ReviewField = {
   rating: number;
   review: string;
-}
+};
 
-const AddCollegeForm = () => {
-  const [name, setName] = useState('');
-  const [academic, setAcademic] = useState<Review>({ rating: 0, review: '' });
-  const [faculty, setFaculty] = useState<Review>({ rating: 0, review: '' });
-  const [infrastructure, setInfrastructure] = useState<Review>({ rating: 0, review: '' });
-  const [accommodation, setAccommodation] = useState<Review>({ rating: 0, review: '' });
-  const [socialLife, setSocialLife] = useState<Review>({ rating: 0, review: '' });
-  const [fee, setFee] = useState<Review>({ rating: 0, review: '' });
-  const [placement, setPlacement] = useState<Review>({ rating: 0, review: '' });
-  const [food, setFood] = useState<Review>({ rating: 0, review: '' });
+type CollegeForm = {
+  name: string;
+  academic: ReviewField;
+  faculty: ReviewField;
+  infrastructure: ReviewField;
+  accommodation: ReviewField;
+  socialLife: ReviewField;
+  fee: ReviewField;
+  placement: ReviewField;
+  food: ReviewField;
+};
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const userId = '6675727b2cb1b7e4450ebe8a'; // You need to set the userId properly based on your application logic
+const initialReviewState: ReviewField = { rating: 0, review: '' };
 
-    const response = await fetch('/api/college', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+const AddCollege: React.FC = () => {
+  const router = useRouter();
+  const [formData, setFormData] = useState<CollegeForm>({
+    name: '',
+    academic: { ...initialReviewState },
+    faculty: { ...initialReviewState },
+    infrastructure: { ...initialReviewState },
+    accommodation: { ...initialReviewState },
+    socialLife: { ...initialReviewState },
+    fee: { ...initialReviewState },
+    placement: { ...initialReviewState },
+    food: { ...initialReviewState },
+  });
+  const [error, setError] = useState<string>('');
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleReviewChange = (field: keyof Omit<CollegeForm, 'name'>, type: 'rating' | 'review', value: string | number) => {
+    setFormData({
+      ...formData,
+      [field]: {
+        ...formData[field],
+        [type]: type === 'rating' ? Number(value) : value,
       },
-      body: JSON.stringify({
-        name,
-        userId,
-        academic,
-        faculty,
-        infrastructure,
-        accommodation,
-        socialLife,
-        fee,
-        placement,
-        food,
-      }),
     });
+  };
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log('College created:', data);
-    } else {
-      console.error('Error creating college');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      const response = await fetch('/api/colleges', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, userId: 'placeholder-user-id' }),
+      });
+
+      if (!response.ok) throw new Error('Failed to add college');
+
+      router.push('/colleges');
+    } catch (err) {
+      setError('Failed to add college. Please try again.');
     }
   };
 
-  const handleRatingChange = (setter: React.Dispatch<React.SetStateAction<Review>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setter(prev => ({ ...prev, rating: Number(e.target.value) }));
-  };
-
-  const handleReviewChange = (setter: React.Dispatch<React.SetStateAction<Review>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setter(prev => ({ ...prev, review: e.target.value }));
-  };
+  const renderReviewFields = (field: keyof Omit<CollegeForm, 'name'>, label: string) => (
+    <div className="mb-4">
+      <h3 className="font-semibold mb-2">{label}</h3>
+      <input
+        type="number"
+        min="0"
+        max="5"
+        step="0.1"
+        value={formData[field].rating}
+        onChange={(e) => handleReviewChange(field, 'rating', e.target.value)}
+        className="w-full p-2 border rounded"
+        placeholder="Rating (0-5)"
+      />
+      <textarea
+        value={formData[field].review}
+        onChange={(e) => handleReviewChange(field, 'review', e.target.value)}
+        className="w-full p-2 border rounded mt-2"
+        placeholder="Review"
+      />
+    </div>
+  );
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>College Name</label>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-      </div>
-      {[
-        { category: 'academic', state: academic, setter: setAcademic },
-        { category: 'faculty', state: faculty, setter: setFaculty },
-        { category: 'infrastructure', state: infrastructure, setter: setInfrastructure },
-        { category: 'accommodation', state: accommodation, setter: setAccommodation },
-        { category: 'socialLife', state: socialLife, setter: setSocialLife },
-        { category: 'fee', state: fee, setter: setFee },
-        { category: 'placement', state: placement, setter: setPlacement },
-        { category: 'food', state: food, setter: setFood },
-      ].map(({ category, state, setter }) => (
-        <div key={category}>
-          <label>{category.charAt(0).toUpperCase() + category.slice(1)}</label>
-          <div>
-            <label>Rating</label>
-            <input type="number" value={state.rating} onChange={handleRatingChange(setter)} />
-          </div>
-          <div>
-            <label>Review</label>
-            <input type="text" value={state.review} onChange={handleReviewChange(setter)} />
-          </div>
+    <div className="max-w-2xl mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6">Add New College</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="name" className="block mb-2 font-semibold">College Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+            className="w-full p-2 border rounded"
+          />
         </div>
-      ))}
-      <button type="submit">Add College</button>
-    </form>
+
+        {renderReviewFields('academic', 'Academic')}
+        {renderReviewFields('faculty', 'Faculty')}
+        {renderReviewFields('infrastructure', 'Infrastructure')}
+        {renderReviewFields('accommodation', 'Accommodation')}
+        {renderReviewFields('socialLife', 'Social Life')}
+        {renderReviewFields('fee', 'Fee')}
+        {renderReviewFields('placement', 'Placement')}
+        {renderReviewFields('food', 'Food')}
+
+        {error && <p className="text-red-500">{error}</p>}
+
+        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          Add College
+        </button>
+      </form>
+    </div>
   );
 };
 
-export default AddCollegeForm;
+export default AddCollege;

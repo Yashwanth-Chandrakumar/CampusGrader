@@ -1,16 +1,5 @@
 import mongoose from 'mongoose';
 
-const reviewSchema = new mongoose.Schema({
-  rating: {
-    type: Number,
-    required: true,
-  },
-  review: {
-    type: String,
-    required: true,
-  },
-});
-
 const collegeSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -21,14 +10,70 @@ const collegeSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  academic: reviewSchema,
-  faculty: reviewSchema,
-  infrastructure: reviewSchema,
-  accommodation: reviewSchema,
-  socialLife: reviewSchema,
-  fee: reviewSchema,
-  placement: reviewSchema,
-  food: reviewSchema,
+  academicRating: {
+    type: Number,
+    required: true,
+  },
+  academicReview: {
+    type: String,
+    required: true,
+  },
+  facultyRating: {
+    type: Number,
+    required: true,
+  },
+  facultyReview: {
+    type: String,
+    required: true,
+  },
+  infrastructureRating: {
+    type: Number,
+    required: true,
+  },
+  infrastructureReview: {
+    type: String,
+    required: true,
+  },
+  accommodationRating: {
+    type: Number,
+    required: true,
+  },
+  accommodationReview: {
+    type: String,
+    required: true,
+  },
+  socialLifeRating: {
+    type: Number,
+    required: true,
+  },
+  socialLifeReview: {
+    type: String,
+    required: true,
+  },
+  feeRating: {
+    type: Number,
+    required: true,
+  },
+  feeReview: {
+    type: String,
+    required: true,
+  },
+  placementRating: {
+    type: Number,
+    required: true,
+  },
+  placementReview: {
+    type: String,
+    required: true,
+  },
+  foodRating: {
+    type: Number,
+    required: true,
+  },
+  foodReview: {
+    type: String,
+    required: true,
+  },
 });
 
 const College = mongoose.models.College || mongoose.model('College', collegeSchema);
