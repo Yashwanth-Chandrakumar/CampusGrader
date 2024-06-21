@@ -1,21 +1,38 @@
 import { connectMongoDB } from '@/lib/mongodb'; // Adjust the path as needed
 import College from '@/models/collegeSchema'; // Adjust the path as needed
-import { NextApiRequest, NextApiResponse } from 'next';
+import { ObjectId } from 'mongodb'; // Import ObjectId from mongodb
+import { NextResponse } from 'next/server';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await connectMongoDB();
+export async function POST(req:any) {
+  try {
+    const { name, userId, academic, faculty, infrastructure, accommodation, socialLife, fee, placement, food } = await req.json();
 
-  if (req.method === 'POST') {
-    const { name, userId, academic, faculty, infrastructure, accommodation, socialLife, fee, placement, food } = req.body;
-
-    try {
-      const newCollege = new College({ name, userId, academic, faculty, infrastructure, accommodation, socialLife, fee, placement, food });
-      await newCollege.save();
-      res.status(201).json(newCollege);
-    } catch (error) {
-      res.status(400).json({ message: 'Error creating college', error });
+    // Validate and convert userId to ObjectId
+    if (!ObjectId.isValid(userId)) {
+      return NextResponse.json({ message: 'Invalid userId format' }, { status: 400 });
     }
-  } else {
-    res.status(405).json({ message: 'Method not allowed' });
+    const objectId = new ObjectId(userId);
+
+    await connectMongoDB();
+    const newCollege = await College.create({
+      name,
+      userId: objectId,
+      academic,
+      faculty,
+      infrastructure,
+      accommodation,
+      socialLife,
+      fee,
+      placement,
+      food
+    });
+
+    return NextResponse.json(newCollege, { status: 201 });
+  } catch (error) {
+    console.error('Error creating college:', error); // Enhanced error logging
+    return NextResponse.json(
+      { message: 'Error creating college', error: error },
+      { status: 500 }
+    );
   }
 }
