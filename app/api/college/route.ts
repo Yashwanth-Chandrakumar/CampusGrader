@@ -1,12 +1,13 @@
 import { connectMongoDB } from '@/lib/mongodb';
 import College from '@/models/collegeSchema';
+import User from '@/models/userSchema';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: any) {
   try {
     const {
-      name, userId, 
+      name, email, 
       academicRating, academicReview,
       facultyRating, facultyReview,
       infrastructureRating, infrastructureReview,
@@ -17,6 +18,8 @@ export async function POST(req: any) {
       foodRating, foodReview
     } = await req.json();
 
+    const user = await User.findOne({email});
+    const userId = user._id;
     if (!ObjectId.isValid(userId)) {
       return NextResponse.json({ message: 'Invalid userId format' }, { status: 400 });
     }

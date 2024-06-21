@@ -1,5 +1,6 @@
 "use client"
 
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from 'react';
 
@@ -10,6 +11,7 @@ type ReviewField = {
 
 type CollegeForm = {
   name: string;
+  email: string;
   academic: ReviewField;
   faculty: ReviewField;
   infrastructure: ReviewField;
@@ -23,9 +25,11 @@ type CollegeForm = {
 const initialReviewState: ReviewField = { rating: 0, review: '' };
 
 const AddCollege: React.FC = () => {
+  const { data: session} = useSession();
   const router = useRouter();
   const [formData, setFormData] = useState<CollegeForm>({
     name: '',
+    email: session?.user?.email || '',
     academic: { ...initialReviewState },
     faculty: { ...initialReviewState },
     infrastructure: { ...initialReviewState },
@@ -42,13 +46,13 @@ const AddCollege: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleReviewChange = (field: keyof Omit<CollegeForm, 'name'>, type: 'rating' | 'review', value: string | number) => {
+  const handleReviewChange = (field: keyof Omit<CollegeForm, 'name' | 'email'>, type: 'rating' | 'review', value: string | number) => {
     setFormData({
       ...formData,
       [field]: {
         ...formData[field],
         [type]: type === 'rating' ? Number(value) : value,
-      },
+      } as ReviewField,
     });
   };
 
@@ -57,7 +61,7 @@ const AddCollege: React.FC = () => {
     setError('');
 
     try {
-      const response = await fetch('/api/colleges', {
+      const response = await fetch('/api/college', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, userId: 'placeholder-user-id' }),
@@ -71,7 +75,7 @@ const AddCollege: React.FC = () => {
     }
   };
 
-  const renderReviewFields = (field: keyof Omit<CollegeForm, 'name'>, label: string) => (
+  const renderReviewFields = (field: keyof Omit<CollegeForm, 'name' | 'email'>, label: string) => (
     <div className="mb-4">
       <h3 className="font-semibold mb-2">{label}</h3>
       <input
