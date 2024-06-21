@@ -1,14 +1,11 @@
+import { useParams } from 'next/navigation';
 
-
-import MainLand from "@/components/MainLand";
-import NavbarDemo from "@/components/navbar";
 const page = () => {
-  
+
+    const param = useParams()
+    const college = param.college;
   return (
-    <div>
-      <NavbarDemo/>
-      <MainLand/>
-    </div>
+    <div>{college}</div>
   )
 }
 
