@@ -1,9 +1,9 @@
-import AddCollegeForm from "@/components/AddCollege";
+import AddCollege from "@/components/AddCollege";
 
 const AddCollegePage = () => {
   return (
     <div>
-      <AddCollegeForm />
+      <AddCollege />
     </div>
   );
 };

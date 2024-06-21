@@ -1,9 +1,8 @@
 "use client"
 
-import { useSession } from "next-auth/react";
+import { SessionProvider, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from 'react';
-
 type ReviewField = {
   rating: number;
   review: string;
@@ -24,8 +23,8 @@ type CollegeForm = {
 
 const initialReviewState: ReviewField = { rating: 0, review: '' };
 
-const AddCollege: React.FC = () => {
-  const { data: session} = useSession();
+const AddCollegeForm: React.FC = () => {
+  const { data: session,status} = useSession();
   const router = useRouter();
   const [formData, setFormData] = useState<CollegeForm>({
     name: '',
@@ -132,5 +131,13 @@ const AddCollege: React.FC = () => {
     </div>
   );
 };
+
+const AddCollege = () => {
+  return (
+    <SessionProvider>
+      <AddCollegeForm/>
+    </SessionProvider>
+  )
+}
 
 export default AddCollege;

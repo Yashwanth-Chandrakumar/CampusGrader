@@ -59,7 +59,7 @@ const Rating = ({
 
   useEffect(() => {
     constructRating(rating);
-  }, [rating]);
+  }, [rating, constructRating]);
 
   return (
     <div className={`${styles.rating} ${className || ''}`} {...props}>
