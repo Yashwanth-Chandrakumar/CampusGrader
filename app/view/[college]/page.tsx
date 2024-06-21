@@ -1,5 +1,6 @@
 "use client"
 
+import View from '@/components/View';
 import { useParams } from 'next/navigation';
 
 const Page = () => {
@@ -13,7 +14,7 @@ const Page = () => {
     }
 
     return (
-        <div>{college}</div>
+        <div><View college={college}/></div>
     )
 }
 
