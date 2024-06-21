@@ -1,4 +1,5 @@
 import NavbarDemo from "./navbar";
+import Rating from "./rating/Rating";
 
 const View = ({college}:{college:string;}) => {
   return (
@@ -6,6 +7,7 @@ const View = ({college}:{college:string;}) => {
         <NavbarDemo/>
         <div className="w-full max-w-7xl mt-10 p-10">
         <h1 className="text-2xl">{college}</h1>
+        <Rating isEditable={false} rating={4} />
         </div>
     </div>
   )
