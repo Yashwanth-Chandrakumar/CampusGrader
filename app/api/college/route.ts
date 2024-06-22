@@ -46,7 +46,7 @@ export async function POST(req: any) {
   } catch (error) {
     console.error('Error creating college:', error);
     return NextResponse.json(
-      { message: 'Error creating college', error: error.message },
+      { message: 'Error creating college', error: error },
       { status: 500 }
     );
   }
