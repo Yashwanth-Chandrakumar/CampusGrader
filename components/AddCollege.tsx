@@ -28,7 +28,7 @@ const AddCollegeForm: React.FC = () => {
   const router = useRouter();
   const [formData, setFormData] = useState<CollegeForm>({
     name: '',
-    email: session?.user?.email || '',
+    email: '',
     academic: { ...initialReviewState },
     faculty: { ...initialReviewState },
     infrastructure: { ...initialReviewState },
@@ -38,6 +38,8 @@ const AddCollegeForm: React.FC = () => {
     placement: { ...initialReviewState },
     food: { ...initialReviewState },
   });
+
+  
   const [error, setError] = useState<string>('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -58,19 +60,43 @@ const AddCollegeForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
+  
     try {
+      const formattedData = {
+        name: formData.name,
+        email: session?.user?.email,
+        academicRating: formData.academic.rating,
+        academicReview: formData.academic.review,
+        facultyRating: formData.faculty.rating,
+        facultyReview: formData.faculty.review,
+        infrastructureRating: formData.infrastructure.rating,
+        infrastructureReview: formData.infrastructure.review,
+        accommodationRating: formData.accommodation.rating,
+        accommodationReview: formData.accommodation.review,
+        socialLifeRating: formData.socialLife.rating,
+        socialLifeReview: formData.socialLife.review,
+        feeRating: formData.fee.rating,
+        feeReview: formData.fee.review,
+        placementRating: formData.placement.rating,
+        placementReview: formData.placement.review,
+        foodRating: formData.food.rating,
+        foodReview: formData.food.review,
+      };
+      console.log(JSON.stringify(formattedData))
       const response = await fetch('/api/college', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, userId: 'placeholder-user-id' }),
+        body: JSON.stringify(formattedData),
       });
-
-      if (!response.ok) throw new Error('Failed to add college');
-
-      router.push('/colleges');
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add college');
+      }
+  
+      router.push('/college');
     } catch (err) {
-      setError('Failed to add college. Please try again.');
+      setError(err.message || 'Failed to add college. Please try again.');
     }
   };
 
