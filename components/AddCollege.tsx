@@ -95,9 +95,12 @@ const AddCollegeForm: React.FC = () => {
       }
   
       router.push('/college');
-    } catch (err) {
-      setError(err.message || 'Failed to add college. Please try again.');
-    }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Failed to add college. Please try again.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
   };
 
   const renderReviewFields = (field: keyof Omit<CollegeForm, 'name' | 'email'>, label: string) => (
