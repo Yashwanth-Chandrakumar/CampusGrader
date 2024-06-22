@@ -19,11 +19,11 @@ export async function POST(req: any) {
     } = await req.json();
 
     const user = await User.findOne({email});
-    const userId = user._id;
-    if (!ObjectId.isValid(userId)) {
+    
+    if (!ObjectId.isValid(user._id)) {
       return NextResponse.json({ message: 'Invalid userId format' }, { status: 400 });
     }
-    const objectId = new ObjectId(userId);
+    const objectId = new ObjectId(user._id);
 
     await connectMongoDB();
     const newCollege = await College.create({
