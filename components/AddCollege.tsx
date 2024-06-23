@@ -83,8 +83,6 @@ const AddCollegeForm: React.FC = () => {
         foodReview: formData.food.review,
       };
       
-      console.log(JSON.stringify(formattedData))
-
       const response = await fetch('/api/college', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
