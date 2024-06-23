@@ -3,6 +3,7 @@
 import { SessionProvider, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from 'react';
+
 type ReviewField = {
   rating: number;
   review: string;
@@ -24,7 +25,7 @@ type CollegeForm = {
 const initialReviewState: ReviewField = { rating: 0, review: '' };
 
 const AddCollegeForm: React.FC = () => {
-  const { data: session,status} = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [formData, setFormData] = useState<CollegeForm>({
     name: '',
@@ -39,7 +40,6 @@ const AddCollegeForm: React.FC = () => {
     food: { ...initialReviewState },
   });
 
-  
   const [error, setError] = useState<string>('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -60,7 +60,7 @@ const AddCollegeForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-  
+
     try {
       const formattedData = {
         name: formData.name,
@@ -82,18 +82,20 @@ const AddCollegeForm: React.FC = () => {
         foodRating: formData.food.rating,
         foodReview: formData.food.review,
       };
+      
       console.log(JSON.stringify(formattedData))
+
       const response = await fetch('/api/college', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formattedData),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to add college');
       }
-  
+
       router.push('/college');
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -101,6 +103,7 @@ const AddCollegeForm: React.FC = () => {
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
+    }
   };
 
   const renderReviewFields = (field: keyof Omit<CollegeForm, 'name' | 'email'>, label: string) => (
