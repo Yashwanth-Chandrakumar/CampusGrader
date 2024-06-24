@@ -1,4 +1,4 @@
-import { KeyboardEvent, useEffect, useState } from 'react';
+import { KeyboardEvent, useCallback, useEffect, useState } from 'react';
 import styles from './Rating.module.css';
 import { RatingProps } from './Rating.props';
 import Star from './Star';
@@ -12,7 +12,7 @@ const Rating = ({
 }: RatingProps): JSX.Element => {
   const [ratingArray, setRatingArray] = useState<JSX.Element[]>(new Array(5).fill(<></>));
 
-  const constructRating = (currentRating: number) => {
+  const constructRating = useCallback((currentRating: number) => {
     const updatedArray = ratingArray.map((_, idx: number) => {
       const isFilled = idx < Math.floor(currentRating);
       const isHalfFilled = !isFilled && idx < currentRating;
@@ -32,7 +32,7 @@ const Rating = ({
       );
     });
     setRatingArray(updatedArray);
-  };
+  }, [rating, isEditable]);
 
   const hoverHandle = (idx: number) => {
     if (!isEditable) {
