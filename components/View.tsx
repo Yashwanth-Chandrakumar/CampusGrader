@@ -10,7 +10,7 @@ const fetchReviews = async (college: string) => {
 
 const View = ({ college }: { college: string }) => {
   const [userRating, setUserRating] = useState(0);
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState('academic');
 
   useEffect(() => {
@@ -18,7 +18,13 @@ const View = ({ college }: { college: string }) => {
   }, [college]);
 
   const renderReviews = (category: string) => {
-    return reviews.map((review: any, index: number) => (
+    const filteredReviews = reviews.filter((review) => review[`${category}Rating`] !== undefined);
+
+    if (filteredReviews.length === 0) {
+      return <p className="text-xl text-center mt-4">Be the first to review the college.</p>;
+    }
+
+    return filteredReviews.map((review: any, index: number) => (
       <div key={index} className="mb-4">
         <p className="text-xl font-semibold">Anonymous</p>
         <Rating isEditable={false} rating={review[`${category}Rating`]} setRating={() => {}} />
@@ -47,7 +53,7 @@ const View = ({ college }: { college: string }) => {
           ))}
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 w-full">
           {renderReviews(activeTab)}
         </div>
       </div>
