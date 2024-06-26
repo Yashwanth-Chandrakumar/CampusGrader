@@ -2,7 +2,8 @@
 
 import { SessionProvider, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import NavbarDemo from "./navbar";
 
 type ReviewField = {
   rating: number;
@@ -18,7 +19,6 @@ const initialReviewState: ReviewField = { rating: 0, review: '' };
 const Rate: React.FC<RateProps> = ({ college }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [darkMode, setDarkMode] = useState(false);
   const [formData, setFormData] = useState({
     academic: { ...initialReviewState },
     faculty: { ...initialReviewState },
@@ -30,14 +30,6 @@ const Rate: React.FC<RateProps> = ({ college }) => {
     food: { ...initialReviewState },
   });
   const [error, setError] = useState<string>('');
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
 
   const handleReviewChange = (field: keyof typeof formData, type: 'rating' | 'review', value: string | number) => {
     setFormData({
@@ -87,7 +79,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
 
   const renderReviewFields = (field: keyof typeof formData, label: string) => (
     <div className="mb-4">
-      <h3 className="font-semibold mb-2 dark:text-gray-200">{label}</h3>
+      <h3 className="font-semibold mb-2 text-gray-800 dark:text-gray-200">{label}</h3>
       <input
         type="number"
         min="0"
@@ -95,55 +87,50 @@ const Rate: React.FC<RateProps> = ({ college }) => {
         step="0.1"
         value={formData[field].rating}
         onChange={(e) => handleReviewChange(field, 'rating', e.target.value)}
-        className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
+        className="w-full p-2 border rounded bg-white dark:bg-zinc-800 text-gray-800 dark:text-gray-200"
         placeholder="Rating (0-5)"
       />
       <textarea
         value={formData[field].review}
         onChange={(e) => handleReviewChange(field, 'review', e.target.value)}
-        className="w-full p-2 border rounded mt-2 dark:bg-gray-700 dark:text-white"
+        className="w-full p-2 border rounded mt-2 bg-white dark:bg-zinc-800 text-gray-800 dark:text-gray-200"
         placeholder="Review"
       />
     </div>
   );
 
-  return (
-    <div className={`max-w-2xl mx-auto p-4 ${darkMode ? 'dark' : ''}`}>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold dark:text-white">Rate {college}</h1>
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
-        >
-          {darkMode ? '🌞 Light' : '🌙 Dark'}
-        </button>
+  return (<><NavbarDemo/>
+    <div className="flex flex-col items-center min-h-screen py-2 bg-zinc-50 dark:bg-zinc-900">
+      <div className="w-full max-w-4xl mt-32">
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">Rate {college}</h1>
+        <form onSubmit={handleSubmit} className="space-y-4 bg-white dark:bg-zinc-800 rounded-lg shadow-md p-6">
+          {renderReviewFields('academic', 'Academic')}
+          {renderReviewFields('faculty', 'Faculty')}
+          {renderReviewFields('infrastructure', 'Infrastructure')}
+          {renderReviewFields('accommodation', 'Accommodation')}
+          {renderReviewFields('socialLife', 'Social Life')}
+          {renderReviewFields('fee', 'Fee')}
+          {renderReviewFields('placement', 'Placement')}
+          {renderReviewFields('food', 'Food')}
+
+          {error && <p className="text-red-500 dark:text-red-400">{error}</p>}
+
+          <button type="submit" className="bg-gradient-to-br relative px-10 group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]">
+            Submit Review
+          </button>
+        </form>
       </div>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {renderReviewFields('academic', 'Academic')}
-        {renderReviewFields('faculty', 'Faculty')}
-        {renderReviewFields('infrastructure', 'Infrastructure')}
-        {renderReviewFields('accommodation', 'Accommodation')}
-        {renderReviewFields('socialLife', 'Social Life')}
-        {renderReviewFields('fee', 'Fee')}
-        {renderReviewFields('placement', 'Placement')}
-        {renderReviewFields('food', 'Food')}
-
-        {error && <p className="text-red-500 dark:text-red-400">{error}</p>}
-
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">
-          Submit Review
-        </button>
-      </form>
     </div>
+    </>
   );
 };
 
 const RateCollege = ({college}:{college:string}) => {
-    return (
-      <SessionProvider>
-        <Rate college={college}/>
-      </SessionProvider>
-    )
-  }
+  return (
+    <SessionProvider>
+      <Rate college={college}/>
+    </SessionProvider>
+  )
+}
 
-  export default RateCollege
+export default RateCollege
