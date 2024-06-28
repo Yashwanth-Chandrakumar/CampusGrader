@@ -1,5 +1,4 @@
-"use client"
-
+"use cient"
 import badWords from 'bad-words';
 import Fuse from 'fuse.js';
 import { SessionProvider, useSession } from "next-auth/react";
@@ -18,12 +17,20 @@ type RateProps = {
   college: string;
 };
 
+type FormDataType = {
+  [key: string]: ReviewField;
+};
+
+type SuggestedCorrectionsType = {
+  [key: string]: { [word: string]: string };
+};
+
 const initialReviewState: ReviewField = { rating: 0, review: '' };
 
 const Rate: React.FC<RateProps> = ({ college }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataType>({
     academic: { ...initialReviewState },
     faculty: { ...initialReviewState },
     infrastructure: { ...initialReviewState },
@@ -34,7 +41,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
     food: { ...initialReviewState },
   });
   const [error, setError] = useState<string>('');
-  const [suggestedCorrections, setSuggestedCorrections] = useState({
+  const [suggestedCorrections, setSuggestedCorrections] = useState<SuggestedCorrectionsType>({
     academic: {},
     faculty: {},
     infrastructure: {},
@@ -44,7 +51,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
     placement: {},
     food: {},
   });
-  const [containsNSFW, setContainsNSFW] = useState(false);
+  const [containsNSFW, setContainsNSFW] = useState<{ [key: string]: boolean }>({});
 
   // Initialize Fuse for fuzzy matching
   const fuse = new Fuse(dictionary, { includeScore: true });
@@ -52,15 +59,15 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   // Initialize bad-words filter
   const filter = new badWords();
 
-  const handleReviewChange = (field: keyof typeof formData, type: 'rating' | 'review', value: string | number) => {
+  const handleReviewChange = (field: keyof FormDataType, type: 'rating' | 'review', value: string | number) => {
     if (type === 'review') {
       // Check for typos and suggest corrections
       const words = (value as string).split(/\s+/);
-      const corrections = {};
+      const corrections: { [word: string]: string } = {};
       words.forEach(word => {
         if (!dictionary.includes(word.toLowerCase())) {
           const result = fuse.search(word);
-          if (result.length > 0 && result[0].score < 0.3) {
+          if (result.length > 0 && result[0].score !== undefined && result[0].score < 0.3) {
             corrections[word] = result[0].item;
           }
         }
@@ -71,19 +78,22 @@ const Rate: React.FC<RateProps> = ({ college }) => {
       }));
 
       // Check for NSFW content
-      setContainsNSFW(filter.isProfane(value as string));
+      setContainsNSFW(prev => ({
+        ...prev,
+        [field]: filter.isProfane(value as string)
+      }));
     }
 
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [field]: {
-        ...formData[field],
+        ...prev[field],
         [type]: type === 'rating' ? Number(value) : value,
-      } as ReviewField,
-    });
+      },
+    }));
   };
 
-  const applyCorrection = (field: keyof typeof formData, original: string, corrected: string) => {
+  const applyCorrection = (field: keyof FormDataType, original: string, corrected: string) => {
     const newReview = formData[field].review.replace(new RegExp(`\\b${original}\\b`, 'g'), corrected);
     handleReviewChange(field, 'review', newReview);
     setSuggestedCorrections(prev => {
@@ -94,10 +104,46 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    // ... [handleSubmit implementation remains the same]
+    e.preventDefault();
+    setError('');
+
+    const hasNSFWContent = Object.values(containsNSFW).some(value => value === true);
+
+  if (hasNSFWContent) {
+    setError('Your review contains inappropriate language. Please revise before submitting.');
+    return;
+  }
+    try {
+      const formattedData = {
+        name: college,
+        email: session?.user?.email,
+        ...Object.entries(formData).reduce((acc, [key, value]) => ({
+          ...acc,
+          [`${key}Rating`]: value.rating,
+          [`${key}Review`]: value.review,
+        }), {}),
+      };
+      
+      const response = await fetch('/api/college', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formattedData),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add review');
+      }
+      router.push(`/view/${college}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Failed to add review. Please try again.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+    }
   };
 
-  const renderReviewFields = (field: keyof typeof formData, label: string) => (
+  const renderReviewFields = (field: keyof FormDataType, label: string) => (
     <div className="mb-6">
       <h3 className="font-semibold mb-2 text-gray-800 dark:text-gray-200">{label}</h3>
       <input
@@ -121,14 +167,14 @@ const Rate: React.FC<RateProps> = ({ college }) => {
         <div key={original} className="text-sm text-blue-600 dark:text-blue-400 mt-1">
           Did you mean "{corrected}" instead of "{original}"?
           <button 
-            onClick={() => applyCorrection(field, original, corrected as string)}
+            onClick={() => applyCorrection(field, original, corrected)}
             className="ml-2 underline hover:text-blue-800 dark:hover:text-blue-300"
           >
             Apply correction
           </button>
         </div>
       ))}
-      {containsNSFW && (
+      {containsNSFW[field] && (
         <p className="text-red-500 dark:text-red-400 mt-1">
           Your review contains inappropriate language. Please revise before submitting.
         </p>
@@ -154,7 +200,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
 
           <button 
             type="submit" 
-            className="bg-gradient-to-br relative px-10 group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-12 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] hover:from-neutral-800 hover:to-neutral-700 dark:hover:from-zinc-800 dark:hover:to-zinc-800 transition-all duration-300"
+            className="bg-gradient-to-br relative group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
           >
             Submit Review
           </button>
