@@ -124,7 +124,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
         }), {}),
       };
       
-      const response = await fetch('/api/college', {
+      const response = await fetch(`/api/rate/${college}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formattedData),

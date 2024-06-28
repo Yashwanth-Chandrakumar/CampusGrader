@@ -74,7 +74,8 @@ const collegeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-});
+  
+},{ timestamps: true });
 
 const College = mongoose.models.College || mongoose.model('College', collegeSchema);
 
