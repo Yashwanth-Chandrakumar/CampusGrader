@@ -25,6 +25,33 @@ const fetchReviews = async (college: string): Promise<Review[]> => {
   return data.reviews;
 };
 
+import { JSDOM } from 'jsdom';
+import fetch from 'node-fetch';
+
+const fetchCollegeInfo = async (college: string): Promise<string | null> => {
+  try {
+    const response = await fetch(`https://www.google.com/search?q=${encodeURIComponent(college)}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const html = await response.text();
+    const dom = new JSDOM(html);
+    const document = dom.window.document;
+
+    // Example: Extract more detailed information from search results
+    const results = Array.from(document.querySelectorAll('.BNeawe')); // Adjust based on actual HTML structure
+    const detailedInfo = results.map((result) => result.textContent).join('\n');
+
+    return detailedInfo;
+  } catch (error) {
+    console.error('Error fetching college info:', error);
+    return null;
+  }
+};
+
+
+
 const calculateAverageRating = (reviews: Review[]): number => {
   if (reviews.length === 0) return 0;
 
@@ -60,7 +87,7 @@ const View = ({ college }: { college: string }) => {
   const [activeTab, setActiveTab] = useState<string>('academic');
   const [averageRating, setAverageRating] = useState<number>(0);
   const [starCounts, setStarCounts] = useState<StarCounts>({ 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 });
-
+  const [collegeInfo, setCollegeInfo] = useState<string | null>(null);
   useEffect(() => {
     fetchReviews(college).then((reviews) => {
       setReviews(reviews);
@@ -72,6 +99,9 @@ const View = ({ college }: { college: string }) => {
         2: countStarRatings(reviews, 2),
         1: countStarRatings(reviews, 1),
       });
+    });
+    fetchCollegeInfo(college).then((info) => {
+      setCollegeInfo(info);
     });
   }, [college]);
 
@@ -119,7 +149,7 @@ const View = ({ college }: { college: string }) => {
   return (
     <div className="flex flex-col items-center min-h-screen py-2 bg-zinc-50 dark:bg-zinc-900">
       <NavbarDemo />
-      <div className="w-full max-w-4xl mt-32 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-5xl mt-32 px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">{college}</h1>
         <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-md p-8">
           <div className="flex flex-row  justify-around items-center">
@@ -161,29 +191,15 @@ const View = ({ college }: { college: string }) => {
             {renderReviews(activeTab)}
           </div>
 
-          <div className="mt-8">
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">College Highlights</h2>
-            <ul className="list-disc ml-5 mt-2 text-gray-800 dark:text-gray-200">
-              <li>Well-equipped laboratories and libraries.</li>
-              <li>Experienced and dedicated faculty.</li>
-              <li>Strong placement record.</li>
-              <li>Active student life with various clubs and societies.</li>
-              <li>Modern infrastructure and facilities.</li>
-              <li>Supportive and inclusive campus environment.</li>
-            </ul>
-          </div>
+          
 
           <div className="mt-8">
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">About {college}</h2>
-            <p className="text-gray-800 dark:text-gray-200">
-              {college} is renowned for its excellence in academics and research. The college offers a wide range of undergraduate and postgraduate programs in various disciplines. With a commitment to providing a holistic education, the college emphasizes both academic rigor and extracurricular activities.
-            </p>
-            <p className="mt-4 text-gray-800 dark:text-gray-200">
-              The campus is equipped with state-of-the-art facilities, including modern classrooms, advanced laboratories, a well-stocked library, and comfortable accommodation options. The faculty comprises experienced professionals who are dedicated to nurturing the intellectual and personal growth of students.
-            </p>
-            <p className="mt-4 text-gray-800 dark:text-gray-200">
-              {college} also has a vibrant student community with numerous clubs and societies that cater to a wide range of interests, from arts and culture to sports and technology. The college regularly organizes events, workshops, and seminars to enhance the learning experience and provide students with ample opportunities for personal development.
-            </p>
+          {collegeInfo && (
+            <div className="mt-8">
+              <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">About {college}</h2>
+              <p className="text-gray-800 dark:text-gray-200">{collegeInfo}</p>
+            </div>
+          )}
           </div>
         </div>
       </div>
