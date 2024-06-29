@@ -63,7 +63,8 @@ const countStarRatings = (reviews: Review[], star: number): number => {
 
 const View = ({ college }: { college: string }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [activeTab, setActiveTab] = useState<string>('academic');
+  const [activeTab, setActiveTab] = useState<keyof Review>('academicRating');
+
   const [averageRating, setAverageRating] = useState<number>(0);
   const [starCounts, setStarCounts] = useState<StarCounts>({ 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 });
   const [collegeInfo, setCollegeInfo] = useState<string | null>(null);
@@ -224,7 +225,7 @@ const View = ({ college }: { college: string }) => {
                     ? 'bg-gradient-to-br from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 text-white'
                     : 'bg-gray-200 dark:bg-zinc-700 text-gray-800 dark:text-gray-200'
                 }`}
-                onClick={() => setActiveTab(category)}
+                onClick={() => setActiveTab(category as keyof Review)}
               >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </button>
@@ -235,7 +236,7 @@ const View = ({ college }: { college: string }) => {
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
               {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Reviews
             </h2>
-            // @ts-ignore: Ignoring type check for accessing dynamic keys in review object
+            
             {renderReviews(activeTab)}
           </div>
 
