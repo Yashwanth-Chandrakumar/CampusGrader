@@ -235,6 +235,7 @@ const View = ({ college }: { college: string }) => {
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
               {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Reviews
             </h2>
+            // @ts-ignore: Ignoring type check for accessing dynamic keys in review object
             {renderReviews(activeTab)}
           </div>
 
