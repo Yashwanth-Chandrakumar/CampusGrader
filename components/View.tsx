@@ -2,7 +2,11 @@ import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from "react";
 import NavbarDemo from "./navbar";
 import Rating from "./rating/Rating";
-
+const {
+  GoogleGenerativeAI,
+  HarmCategory,
+  HarmBlockThreshold,
+} = require("@google/generative-ai");
 type Review = {
   createdAt: string;
   academicRating: number;
@@ -23,31 +27,6 @@ const fetchReviews = async (college: string): Promise<Review[]> => {
   const response = await fetch(`/api/getReviews/${college}`);
   const data = await response.json();
   return data.reviews;
-};
-
-import { JSDOM } from 'jsdom';
-import fetch from 'node-fetch';
-
-const fetchCollegeInfo = async (college: string): Promise<string | null> => {
-  try {
-    const response = await fetch(`https://www.google.com/search?q=${encodeURIComponent(college)}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const html = await response.text();
-    const dom = new JSDOM(html);
-    const document = dom.window.document;
-
-    // Example: Extract more detailed information from search results
-    const results = Array.from(document.querySelectorAll('.BNeawe')); // Adjust based on actual HTML structure
-    const detailedInfo = results.map((result) => result.textContent).join('\n');
-
-    return detailedInfo;
-  } catch (error) {
-    console.error('Error fetching college info:', error);
-    return null;
-  }
 };
 
 
@@ -100,11 +79,73 @@ const View = ({ college }: { college: string }) => {
         1: countStarRatings(reviews, 1),
       });
     });
-    fetchCollegeInfo(college).then((info) => {
-      setCollegeInfo(info);
-    });
-  }, [college]);
+    const fetchCollegeInfo = async () => {
+      try {
+        const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
+        const chat = model.startChat({
+          history: [
+            {
+              role: "user",
+              parts: [
+                {text: "give a general overview info on Sri krishna college of technology, please reply like newspaper, no intro be direct. do not give info that you are completely sure for example if you do not know the contact details dont give it.\n"},
+              ],
+            },
+            {
+              role: "model",
+              parts: [
+                {text: "Sri Krishna College of Technology (SKCT) is a prominent engineering college located in Coimbatore, Tamil Nadu, India. Established in 2001, the college offers a range of undergraduate and postgraduate programs in various engineering disciplines. SKCT is known for its well-equipped infrastructure, including laboratories, a spacious library, and modern classrooms. The college boasts a team of experienced faculty members dedicated to providing quality education. SKCT has strong industry collaborations, offering students valuable practical exposure and placement opportunities. The institution actively promotes research and innovation with dedicated research centers and facilities. SKCT emphasizes holistic development, including extracurricular activities, sports, and cultural events. The college has a commendable placement record with leading companies visiting the campus for recruitment. \n"},
+              ],
+            },
+          ],
+        });
+
+        const result = await chat.sendMessage(`give a general complete overview info on ${college}, please reply like newspaper, no intro or title be direct. do not give info that you are completely sure for example if you do not know the contact details dont give it.`);
+        const response = result.response;
+        setCollegeInfo(response.text());
+      } catch (error) {
+        console.error('Error fetching college info:', error);
+        setCollegeInfo(null);
+      }
+    };
+
+    fetchCollegeInfo();
+  }, [college]);
+  const formatCollegeInfo = (text: string): JSX.Element[] => {
+    const lines = text.split('\n\n'); // Split into paragraphs
+  
+    return lines.map((paragraph, index) => {
+      if (paragraph.startsWith('## ')) {
+        // Handle headings
+        const headingText = paragraph.replace('## ', '');
+        return (
+          <h2 key={index} className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
+            {headingText}
+          </h2>
+        );
+      } else {
+        // Handle bold text within paragraphs
+        const parts = paragraph.split('**');
+        return (
+          <p key={index} className="mb-4 text-gray-800 dark:text-gray-200">
+            {parts.map((part, partIndex) => {
+              if (partIndex % 2 === 1) {
+                return (
+                  <span key={partIndex} className="font-bold">
+                    {part}
+                  </span>
+                );
+              } else {
+                return part;
+              }
+            })}
+          </p>
+        );
+      }
+    });
+  };
+  
   const renderReviews = (category: string) => {
     const filteredReviews = reviews.filter((review) => review[`${category}Rating`] !== undefined);
 
@@ -197,7 +238,7 @@ const View = ({ college }: { college: string }) => {
           {collegeInfo && (
             <div className="mt-8">
               <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">About {college}</h2>
-              <p className="text-gray-800 dark:text-gray-200">{collegeInfo}</p>
+              <p className="text-gray-800 dark:text-gray-200">{formatCollegeInfo(collegeInfo)}</p>
             </div>
           )}
           </div>

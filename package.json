@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.14.0",
     "@radix-ui/react-label": "^2.0.2",
     "@tabler/icons": "^3.5.0",
     "@tabler/icons-react": "^3.5.0",
@@ -21,11 +22,9 @@
     "date-fns": "^3.6.0",
     "framer-motion": "^11.2.10",
     "fuse.js": "^7.0.0",
-    "jsdom": "^24.1.0",
     "mongoose": "^8.4.1",
     "next": "14.2.3",
     "next-auth": "^4.24.7",
-    "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.13",
     "react": "^18",
     "react-dom": "^18",
