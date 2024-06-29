@@ -122,16 +122,20 @@ const View = ({ college }: { college: string }) => {
       <div className="w-full max-w-4xl mt-32 px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">{college}</h1>
         <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-md p-8">
+          <div className="flex flex-row  justify-around items-center">
           <div className="flex flex-col  justify-between items-center mb-6">
-            <div className="flex items-center mb-4 sm:mb-0">
-              <p className="text-2xl font-semibold text-gray-800 dark:text-gray-200">{averageRating.toFixed(1)}</p>
+            <div className="flex flex-col items-center mb-4 sm:mb-0">
+              <div className="flex flex-row justify-around">
+              <p className="text-3xl pr-4 -mt-1.5 font-semibold text-gray-800 dark:text-gray-200">{averageRating.toFixed(1)}</p>
               <Rating isEditable={false} rating={averageRating} setRating={() => {}} />
-            </div>
+              </div>
             <p className="text-gray-800 dark:text-gray-200">{reviews.length} reviews</p>
+            </div>
           </div>
 
           <div className="w-full max-w-xs mb-6">
             {[5, 4, 3, 2, 1].map(star => renderStarRatingBar(star))}
+          </div>
           </div>
 
           <div className="mt-8 space-x-2 flex flex-wrap">
