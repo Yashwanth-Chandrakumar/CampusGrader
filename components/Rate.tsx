@@ -165,7 +165,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
       />
       {Object.entries(suggestedCorrections[field]).map(([original, corrected]) => (
         <div key={original} className="text-sm text-blue-600 dark:text-blue-400 mt-1">
-          Did you mean "{corrected}" instead of "{original}"?
+          Did you mean &quot;{corrected}&quot; instead of &quot;{original}&quot;?
           <button 
             onClick={() => applyCorrection(field, original, corrected)}
             className="ml-2 underline hover:text-blue-800 dark:hover:text-blue-300"

@@ -146,28 +146,29 @@ const View = ({ college }: { college: string }) => {
     });
   };
   
-  const renderReviews = (category: string) => {
-    const filteredReviews = reviews.filter((review) => review[`${category}Rating`] !== undefined);
-
+  const renderReviews = (category: keyof Review) => {
+    const filteredReviews = reviews.filter((review) => review[category] !== undefined);
+  
     if (filteredReviews.length === 0) {
       return <p className="text-xl text-center mt-4 dark:text-gray-200">Be the first to review the college.</p>;
     }
-
+  
     return filteredReviews.map((review, index) => {
       const reviewDate = formatDistanceToNow(new Date(review.createdAt), { addSuffix: true });
-
+  
       return (
         <div key={index} className="mb-4 p-4 bg-gray-100 dark:bg-zinc-700 rounded-lg shadow">
           <div className="flex items-center mb-2">
             <p className="text-xl font-semibold text-gray-800 dark:text-gray-200">Anonymous</p>
             <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">{reviewDate}</span>
           </div>
-          <Rating isEditable={false} rating={review[`${category}Rating`]} setRating={() => {}} />
+          <Rating isEditable={false} rating={review[category]} setRating={() => {}} />
           <p className="mt-2 text-gray-800 dark:text-gray-200">{review[`${category}Review`]}</p>
         </div>
       );
     });
   };
+  
 
   const renderStarRatingBar = (star: number) => {
     const count = starCounts[star];
