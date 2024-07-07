@@ -60,13 +60,13 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   // Initialize bad-words filter
   const filter = new badWords();
 
-  const handleReviewChange = (field: keyof FormDataType, type: 'rating' | 'review', value: string | number) => {
+  const handleReviewChange = (field: keyof FormDataType, type: 'rating' | 'review', value: string | number | React.SetStateAction<number>) => {
     if (type === 'rating') {
       setFormData(prev => ({
         ...prev,
         [field]: {
           ...prev[field],
-          rating: Number(value),
+          rating: typeof value === 'function' ? value(prev[field].rating) : Number(value),
         },
       }));
     }
@@ -92,15 +92,15 @@ const Rate: React.FC<RateProps> = ({ college }) => {
         ...prev,
         [field]: filter.isProfane(value as string)
       }));
-    }
 
-    setFormData(prev => ({
-      ...prev,
-      [field]: {
-        ...prev[field],
-        [type]: type === 'rating' ? Number(value) : value,
-      },
-    }));
+      setFormData(prev => ({
+        ...prev,
+        [field]: {
+          ...prev[field],
+          review: value as string,
+        },
+      }));
+    }
   };
 
   const applyCorrection = (field: keyof FormDataType, original: string, corrected: string) => {
@@ -119,10 +119,10 @@ const Rate: React.FC<RateProps> = ({ college }) => {
 
     const hasNSFWContent = Object.values(containsNSFW).some(value => value === true);
 
-  if (hasNSFWContent) {
-    setError('Your review contains inappropriate language. Please revise before submitting.');
-    return;
-  }
+    if (hasNSFWContent) {
+      setError('Your review contains inappropriate language. Please revise before submitting.');
+      return;
+    }
     try {
       const formattedData = {
         name: college,
@@ -133,7 +133,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
           [`${key}Review`]: value.review,
         }), {}),
       };
-      
+
       const response = await fetch(`/api/rate/${college}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -159,7 +159,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
       <Rating
         isEditable={true}
         rating={formData[field].rating}
-        setRating={(newRating:number) => handleReviewChange(field, 'rating', newRating)}
+        setRating={(newRating) => handleReviewChange(field, 'rating', newRating)}
         className="text-yellow-400 py-2"
       />
       <textarea
@@ -187,7 +187,6 @@ const Rate: React.FC<RateProps> = ({ college }) => {
       )}
     </div>
   );
-  
 
   return (
     <div className="flex flex-col items-center min-h-screen py-2 bg-zinc-50 dark:bg-zinc-900">
