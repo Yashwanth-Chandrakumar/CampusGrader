@@ -61,6 +61,15 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   const filter = new badWords();
 
   const handleReviewChange = (field: keyof FormDataType, type: 'rating' | 'review', value: string | number) => {
+    if (type === 'rating') {
+      setFormData(prev => ({
+        ...prev,
+        [field]: {
+          ...prev[field],
+          rating: Number(value),
+        },
+      }));
+    }
     if (type === 'review') {
       // Check for typos and suggest corrections
       const words = (value as string).split(/\s+/);
@@ -150,7 +159,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
       <Rating
         isEditable={true}
         rating={formData[field].rating}
-        setRating={(newRating) => handleReviewChange(field, 'rating', newRating)}
+        setRating={(newRating:number) => handleReviewChange(field, 'rating', newRating)}
         className="text-yellow-400 py-2"
       />
       <textarea
