@@ -10,13 +10,21 @@ const {
 type Review = {
   createdAt: string;
   academicRating: number;
+  academicReview: string;
   facultyRating: number;
+  facultyReview: string;
   infrastructureRating: number;
+  infrastructureReview: string;
   accommodationRating: number;
+  accommodationReview: string;
   socialLifeRating: number;
+  socialLifeReview: string;
   feeRating: number;
+  feeReview: string;
   placementRating: number;
+  placementReview: string;
   foodRating: number;
+  foodReview: string;
 };
 
 type StarCounts = {
@@ -148,29 +156,31 @@ const View = ({ college }: { college: string }) => {
   
   const renderReviews = (category: string) => {
     const ratingKey = `${category}Rating` as keyof Review;
-
+    const reviewKey = `${category}Review` as keyof Review;
+  
     const filteredReviews = reviews.filter(review => review[ratingKey] !== undefined);
-
+  
     if (filteredReviews.length === 0) {
-        return <p className="text-xl text-center mt-4 dark:text-gray-200">Be the first to review the college.</p>;
+      return <p className="text-xl text-center mt-4 dark:text-gray-200">Be the first to review the college.</p>;
     }
-
+  
     return filteredReviews.map((review, index) => {
-        const reviewDate = formatDistanceToNow(new Date(review.createdAt), { addSuffix: true });
-        // Ensure rating is treated as a number
-        const ratingValue = typeof review[ratingKey] === 'number' ? review[ratingKey] : 0;
-
-        return (
-            <div key={index} className="mb-4 p-4 bg-gray-100 dark:bg-zinc-700 rounded-lg shadow">
-                <div className="flex items-center mb-2">
-                    <p className="text-xl font-semibold text-gray-800 dark:text-gray-200">Anonymous</p>
-                    <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">{reviewDate}</span>
-                </div>
-                <Rating isEditable={false} rating={ratingValue} setRating={() => {}} />
-            </div>
-        );
+      const reviewDate = formatDistanceToNow(new Date(review.createdAt), { addSuffix: true });
+      const ratingValue = typeof review[ratingKey] === 'number' ? review[ratingKey] : 0;
+      const reviewText = review[reviewKey] as string; // Add this line to get the review text
+  
+      return (
+        <div key={index} className="mb-4 p-4 bg-gray-100 dark:bg-zinc-700 rounded-lg shadow">
+          <div className="flex items-center mb-2">
+            <p className="text-xl font-semibold text-gray-800 dark:text-gray-200">Anonymous</p>
+            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">{reviewDate}</span>
+          </div>
+          <Rating isEditable={false} rating={ratingValue} setRating={() => {}} />
+          <p className="mt-2 text-gray-800 dark:text-gray-200">{reviewText}</p> {/* Add this line to display the review text */}
+        </div>
+      );
     });
-};
+  };
 
 
   const renderStarRatingBar = (star: number) => {
