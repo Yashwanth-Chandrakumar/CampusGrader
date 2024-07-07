@@ -63,8 +63,7 @@ const countStarRatings = (reviews: Review[], star: number): number => {
 
 const View = ({ college }: { college: string }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [activeTab, setActiveTab] = useState<keyof Review>('academicRating');
-
+  const [activeTab, setActiveTab] = useState<string>('academic');
   const [averageRating, setAverageRating] = useState<number>(0);
   const [starCounts, setStarCounts] = useState<StarCounts>({ 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 });
   const [collegeInfo, setCollegeInfo] = useState<string | null>(null);
@@ -147,34 +146,28 @@ const View = ({ college }: { college: string }) => {
     });
   };
   
-  const renderReviews = (category: keyof Review) => {
-    const filteredReviews = reviews.filter((review) => category in review);
-  
+  const renderReviews = (category: string) => {
+    const filteredReviews = reviews.filter((review) => review[`${category}Rating`] !== undefined);
+
     if (filteredReviews.length === 0) {
       return <p className="text-xl text-center mt-4 dark:text-gray-200">Be the first to review the college.</p>;
     }
-  
+
     return filteredReviews.map((review, index) => {
       const reviewDate = formatDistanceToNow(new Date(review.createdAt), { addSuffix: true });
-  
-      // Ensure `review[category]` is treated as a string
-      const reviewText = review[category] as string;
-  
+
       return (
         <div key={index} className="mb-4 p-4 bg-gray-100 dark:bg-zinc-700 rounded-lg shadow">
           <div className="flex items-center mb-2">
             <p className="text-xl font-semibold text-gray-800 dark:text-gray-200">Anonymous</p>
             <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">{reviewDate}</span>
           </div>
-          {/* Pass `reviewText` as review content */}
-          <p className="mt-2 text-gray-800 dark:text-gray-200">{reviewText}</p>
+          <Rating isEditable={false} rating={review[`${category}Rating`]} setRating={() => {}} />
+          <p className="mt-2 text-gray-800 dark:text-gray-200">{review[`${category}Review`]}</p>
         </div>
       );
     });
   };
-  
-  
-  
 
   const renderStarRatingBar = (star: number) => {
     const count = starCounts[star];
@@ -225,7 +218,7 @@ const View = ({ college }: { college: string }) => {
                     ? 'bg-gradient-to-br from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 text-white'
                     : 'bg-gray-200 dark:bg-zinc-700 text-gray-800 dark:text-gray-200'
                 }`}
-                onClick={() => setActiveTab(category as keyof Review)}
+                onClick={() => setActiveTab(category)}
               >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </button>
@@ -236,7 +229,6 @@ const View = ({ college }: { college: string }) => {
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
               {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Reviews
             </h2>
-            
             {renderReviews(activeTab)}
           </div>
 
