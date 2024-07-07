@@ -1,4 +1,4 @@
-"use cient"
+"use client"
 import badWords from 'bad-words';
 import Fuse from 'fuse.js';
 import { SessionProvider, useSession } from "next-auth/react";
@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 
 import { dictionary } from './dictionary';
 import NavbarDemo from './navbar';
+import Rating from './rating/Rating';
 
 type ReviewField = {
   rating: number;
@@ -146,15 +147,11 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   const renderReviewFields = (field: keyof FormDataType, label: string) => (
     <div className="mb-6">
       <h3 className="font-semibold mb-2 text-gray-800 dark:text-gray-200">{label}</h3>
-      <input
-        type="number"
-        min="0"
-        max="5"
-        step="0.1"
-        value={formData[field].rating}
-        onChange={(e) => handleReviewChange(field, 'rating', e.target.value)}
-        className="w-full p-2 border rounded bg-white dark:bg-zinc-800 text-gray-800 dark:text-gray-200 mb-2"
-        placeholder="Rating (0-5)"
+      <Rating
+        isEditable={true}
+        rating={formData[field].rating}
+        setRating={(newRating) => handleReviewChange(field, 'rating', newRating)}
+        className="text-yellow-400 py-2"
       />
       <textarea
         value={formData[field].review}
@@ -181,6 +178,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
       )}
     </div>
   );
+  
 
   return (
     <div className="flex flex-col items-center min-h-screen py-2 bg-zinc-50 dark:bg-zinc-900">

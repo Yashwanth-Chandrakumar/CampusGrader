@@ -101,7 +101,7 @@ const View = ({ college }: { college: string }) => {
           ],
         });
 
-        const result = await chat.sendMessage(`give a general complete overview info on ${college}, please reply like newspaper, no intro or title be direct. do not give info that you are completely sure for example if you do not know the contact details dont give it.`);
+        const result = await chat.sendMessage(`give a general complete overview info on ${college}, please reply like newspaper, no intro or title be direct. do not give info that you are completely sure for example if you do not know the contact details dont give it. Give as separate paragraphs and not as single block of text`);
         const response = result.response;
         setCollegeInfo(response.text());
       } catch (error) {
