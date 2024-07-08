@@ -166,7 +166,7 @@ const View = ({ college }: { college: string }) => {
   
     return filteredReviews.map((review, index) => {
       const reviewDate = formatDistanceToNow(new Date(review.createdAt), { addSuffix: true });
-      const ratingValue = typeof review[ratingKey] === 'number' ? review[ratingKey] : 0;
+      const ratingValue = typeof review[ratingKey] === 'number' ? review[ratingKey] as number : 0;
       const reviewText = review[reviewKey] as string; // Add this line to get the review text
   
       return (
@@ -181,6 +181,7 @@ const View = ({ college }: { college: string }) => {
       );
     });
   };
+  
 
 
   const renderStarRatingBar = (star: number) => {
