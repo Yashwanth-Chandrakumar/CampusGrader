@@ -191,7 +191,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   return (
     <div className="flex flex-col items-center min-h-screen py-2 bg-zinc-50 dark:bg-zinc-900">
       <div className="w-full max-w-4xl mt-32">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">Rate {college}</h1>
+        <h1 className="text-2xl pl-2 md:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">Rate {college}</h1>
         <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-zinc-800 rounded-lg shadow-md p-8">
           {renderReviewFields('academic', 'Academic')}
           {renderReviewFields('faculty', 'Faculty')}
