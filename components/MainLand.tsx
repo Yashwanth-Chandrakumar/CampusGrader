@@ -73,7 +73,7 @@ const Landingpage = () => {
           <h2 className="text-gray-800 dark:text-gray-200 py-2 font-bold">Search Result</h2>
           {filteredColleges.length > 0 ? (
             filteredColleges.map((college, index) => (<>
-              <div key={index} className="flex justify-between items-center text-gray-800 dark:text-gray-200 p-2 ">
+              <div key={index} className="flex flex-col md:flex-row justify-between items-center text-gray-800 dark:text-gray-200 p-2 ">
                 <span>{college}</span>
                 <div className="flex space-x-2">
                 <Link
