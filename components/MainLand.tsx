@@ -1,6 +1,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { listItems } from "./CollegeList";
@@ -9,9 +10,7 @@ import { PlaceholdersAndVanishInput } from "./ui/placeholders-and-vanish-input";
 const MainLand = () => {
   return (
     <div>
-      <SessionProvider>
         <Landingpage />
-      </SessionProvider>
     </div>
   );
 };
@@ -77,9 +76,19 @@ const Landingpage = () => {
               <div key={index} className="flex justify-between items-center text-gray-800 dark:text-gray-200 p-2 ">
                 <span>{college}</span>
                 <div className="flex space-x-2">
-                  <button type="button" onClick={()=>{router.push(`/view/${encodeURIComponent(college)}`)}} className="bg-gradient-to-br relative px-10 group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]">View</button>
-                  <button type="button" onClick={()=>{router.push(`/rate/${encodeURIComponent(college)}`)}} className="bg-gradient-to-br relative px-10 group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]">Rate</button>
-                </div>
+                <Link
+                      href={`/view/${encodeURIComponent(college)}`}
+                      className="bg-gradient-to-br relative px-10 group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] flex items-center justify-center"
+                    >
+                      View
+                    </Link>
+                    <Link
+                      href={`/rate/${encodeURIComponent(college)}`}
+                      className="bg-gradient-to-br relative px-10 group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] flex items-center justify-center"
+                    >
+                      Rate
+                    </Link>
+                 </div>
                 
               </div>
               <div className="bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent my-3 h-[1px] w-full" />
