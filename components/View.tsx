@@ -205,7 +205,7 @@ const View = ({ college }: { college: string }) => {
     <div className="flex flex-col items-center min-h-screen py-2 bg-zinc-50 dark:bg-zinc-900">
       <NavbarDemo />
       <div className="w-full max-w-5xl mt-32 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">{college}</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">{college}</h1>
         <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-md p-8">
           <div className="flex md:flex-row flex-col  justify-around items-center">
           <div className="flex flex-col  justify-between items-center mb-6">
