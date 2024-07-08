@@ -207,7 +207,7 @@ const View = ({ college }: { college: string }) => {
       <div className="w-full max-w-5xl mt-32 px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">{college}</h1>
         <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-md p-8">
-          <div className="flex flex-row  justify-around items-center">
+          <div className="flex md:flex-row flex-col  justify-around items-center">
           <div className="flex flex-col  justify-between items-center mb-6">
             <div className="flex flex-col items-center mb-4 sm:mb-0">
               <div className="flex flex-row justify-around">
