@@ -140,6 +140,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   } catch (error) {
     console.error('Error creating college:', error);
-    res.status(500).json({ message: 'Error creating college', error: error });
+    res.status(500).json({ message: 'Error creating college', error });
   }
 }

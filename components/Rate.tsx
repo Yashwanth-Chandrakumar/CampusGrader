@@ -53,12 +53,12 @@ const Rate: React.FC<RateProps> = ({ college }) => {
     food: {},
   });
   const [containsNSFW, setContainsNSFW] = useState<{ [key: string]: boolean }>({});
-  const [idCard, setIdCard] = useState(null);
+  const [idCard, setIdCard] = useState<File | null>(null);
 
-  const handleIDCardUpload = (file) => {
+  const handleIDCardUpload = (file: File) => {
     setIdCard(file);
   };
-  
+
   // Initialize Fuse for fuzzy matching
   const fuse = new Fuse(dictionary, { includeScore: true });
 
@@ -121,38 +121,38 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-  
+
     const hasNSFWContent = Object.values(containsNSFW).some(value => value === true);
-  
+
     if (hasNSFWContent) {
       setError('Your review contains inappropriate language. Please revise before submitting.');
       return;
     }
-  
+
     try {
       const formDataToSubmit = new FormData();
       formDataToSubmit.append('name', college);
-      formDataToSubmit.append('email', session?.user?.email);
-  
+      formDataToSubmit.append('email', session?.user?.email || '');
+
       Object.entries(formData).forEach(([key, value]) => {
         formDataToSubmit.append(`${key}Rating`, value.rating.toString());
         formDataToSubmit.append(`${key}Review`, value.review);
       });
-  
+
       if (idCard) {
         formDataToSubmit.append('idCard', idCard);
       }
-  
+
       const response = await fetch(`/api/rate/${college}`, {
         method: 'POST',
         body: formDataToSubmit,
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to add review');
       }
-  
+
       router.push(`/view/${college}`);
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -162,7 +162,6 @@ const Rate: React.FC<RateProps> = ({ college }) => {
       }
     }
   };
-  
 
   const renderReviewFields = (field: keyof FormDataType, label: string) => (
     <div className="mb-6">
@@ -214,20 +213,23 @@ const Rate: React.FC<RateProps> = ({ college }) => {
           {renderReviewFields('food', 'Food')}
 
           {error && <p className="text-red-500 dark:text-red-400 mb-4">{error}</p>}
-          // Add this inside your form
-<div className="mb-6">
-  <label htmlFor="idCard" className="block text-sm font-medium text-gray-700">
-    Upload ID Card (for verified review)
-  </label>
-  <input
-    type="file"
-    id="idCard"
-    name="idCard"
-    accept="image/*"
-    className="mt-1 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
-    onChange={(e) => handleIDCardUpload(e.target.files[0])}
-  />
-</div>
+          <div className="mb-6">
+            <label htmlFor="idCard" className="block text-sm font-medium text-gray-700">
+              Upload ID Card (for verified review)
+            </label>
+            <input
+              type="file"
+              id="idCard"
+              name="idCard"
+              accept="image/*"
+              className="mt-1 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  handleIDCardUpload(e.target.files[0]);
+                }
+              }}
+            />
+          </div>
 
           <button 
             type="submit" 
@@ -244,7 +246,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
 const RateCollege = ({college}:{college:string}) => {
   return (
     <SessionProvider>
-        <NavbarDemo/>
+      <NavbarDemo/>
       <Rate college={college}/>
     </SessionProvider>
   )
