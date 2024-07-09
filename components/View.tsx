@@ -189,15 +189,15 @@ const View = ({ college }: { college: string }) => {
     const percentage = (count / reviews.length) * 100;
 
     return (
-      <div className="flex items-center mb-2" key={star}>
-        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{star} ⭐</p>
+      <div className="flex flex-row items-center mb-2" key={star}>
+        <p className="flex flex-row text-sm font-semibold text-gray-800 dark:text-gray-200"><span>{star}</span><span>⭐</span></p>
         <div className="w-2/3 h-3 bg-gray-300 dark:bg-zinc-600 rounded-lg mx-2">
           <div
             className="h-3 bg-blue-600 dark:bg-blue-400 rounded-lg"
             style={{ width: `${percentage}%` }}
           ></div>
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-400">( {percentage }% )</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">{percentage }%</p>
       </div>
     );
   };
