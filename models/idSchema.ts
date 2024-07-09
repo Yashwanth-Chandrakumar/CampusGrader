@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 
-
-const idCardUploadSchema = new mongoose.Schema({
+const idSchema = new mongoose.Schema({
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -16,10 +15,15 @@ const idCardUploadSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    expiresAt: {
-      type: Date,
-      default: () => new Date(+new Date() + 7*24*60*60*1000) // 7 days from now
+    verified: {
+      type: Boolean,
+      default: false
+    },
+    adminNotes: {
+      type: String,
+      default: ''
     }
   }, { timestamps: true });
-  
-  const IdCardUpload = mongoose.models.IdCardUpload || mongoose.model('IdCardUpload', idCardUploadSchema);
+
+const IdCardUpload = mongoose.models.IdCardUpload || mongoose.model('IdCardUpload', idSchema);
+export default IdCardUpload;

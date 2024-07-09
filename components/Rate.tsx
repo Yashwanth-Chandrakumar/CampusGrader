@@ -119,44 +119,49 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  e.preventDefault();
+  setError('');
 
-    const hasNSFWContent = Object.values(containsNSFW).some(value => value === true);
+  const hasNSFWContent = Object.values(containsNSFW).some(value => value === true);
 
-    if (hasNSFWContent) {
-      setError('Your review contains inappropriate language. Please revise before submitting.');
-      return;
+  if (hasNSFWContent) {
+    setError('Your review contains inappropriate language. Please revise before submitting.');
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append('name', college);
+    formData.append('email', session?.user?.email);
+
+    Object.entries(formData).forEach(([key, value]) => {
+      formData.append(`${key}Rating`, value.rating.toString());
+      formData.append(`${key}Review`, value.review);
+    });
+
+    if (idCard) {
+      formData.append('idCard', idCard);
     }
-    try {
-      const formattedData = {
-        name: college,
-        email: session?.user?.email,
-        ...Object.entries(formData).reduce((acc, [key, value]) => ({
-          ...acc,
-          [`${key}Rating`]: value.rating,
-          [`${key}Review`]: value.review,
-        }), {}),
-      };
 
-      const response = await fetch(`/api/rate/${college}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formattedData),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add review');
-      }
-      router.push(`/view/${college}`);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message || 'Failed to add review. Please try again.');
-      } else {
-        setError('An unexpected error occurred. Please try again.');
-      }
+    const response = await fetch(`/api/rate/${college}`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to add review');
     }
-  };
+
+    router.push(`/view/${college}`);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      setError(err.message || 'Failed to add review. Please try again.');
+    } else {
+      setError('An unexpected error occurred. Please try again.');
+    }
+  }
+};
 
   const renderReviewFields = (field: keyof FormDataType, label: string) => (
     <div className="mb-6">
