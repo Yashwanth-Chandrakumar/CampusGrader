@@ -3,7 +3,7 @@ import { s3 } from '@/lib/s3';
 import College from '@/models/collegeSchema';
 import IdCardUpload from '@/models/idSchema';
 import User from '@/models/userSchema';
-import formidable, { Fields, Files } from 'formidable';
+import formidable, { Fields, File, Files } from 'formidable';
 import fs from 'fs';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -34,6 +34,13 @@ type FormFields = {
   foodReview: string;
 };
 
+const getFieldAsString = (field: string | string[] | undefined): string => {
+  if (Array.isArray(field)) {
+    return field[0];
+  }
+  return field || '';
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
@@ -49,27 +56,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(500).json({ message: 'Error parsing form' });
       }
 
+      // Log the fields and files for debugging
+      console.log('Parsed fields:', fields);
+      console.log('Parsed files:', files);
+
       // Ensure fields match FormFields structure
       const formFields: FormFields = {
-        name: fields.name as string,
-        email: fields.email as string,
-        academicRating: fields.academicRating as string,
-        academicReview: fields.academicReview as string,
-        facultyRating: fields.facultyRating as string,
-        facultyReview: fields.facultyReview as string,
-        infrastructureRating: fields.infrastructureRating as string,
-        infrastructureReview: fields.infrastructureReview as string,
-        accommodationRating: fields.accommodationRating as string,
-        accommodationReview: fields.accommodationReview as string,
-        socialLifeRating: fields.socialLifeRating as string,
-        socialLifeReview: fields.socialLifeReview as string,
-        feeRating: fields.feeRating as string,
-        feeReview: fields.feeReview as string,
-        placementRating: fields.placementRating as string,
-        placementReview: fields.placementReview as string,
-        foodRating: fields.foodRating as string,
-        foodReview: fields.foodReview as string,
+        name: getFieldAsString(fields.name),
+        email: getFieldAsString(fields.email),
+        academicRating: getFieldAsString(fields.academicRating),
+        academicReview: getFieldAsString(fields.academicReview),
+        facultyRating: getFieldAsString(fields.facultyRating),
+        facultyReview: getFieldAsString(fields.facultyReview),
+        infrastructureRating: getFieldAsString(fields.infrastructureRating),
+        infrastructureReview: getFieldAsString(fields.infrastructureReview),
+        accommodationRating: getFieldAsString(fields.accommodationRating),
+        accommodationReview: getFieldAsString(fields.accommodationReview),
+        socialLifeRating: getFieldAsString(fields.socialLifeRating),
+        socialLifeReview: getFieldAsString(fields.socialLifeReview),
+        feeRating: getFieldAsString(fields.feeRating),
+        feeReview: getFieldAsString(fields.feeReview),
+        placementRating: getFieldAsString(fields.placementRating),
+        placementReview: getFieldAsString(fields.placementReview),
+        foodRating: getFieldAsString(fields.foodRating),
+        foodReview: getFieldAsString(fields.foodReview),
       };
+
+      // Log the form fields for debugging
+      console.log('Form fields:', JSON.stringify(formFields, null, 2));
 
       // Basic validation
       if (!formFields.name || !formFields.email) {
@@ -100,11 +114,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         placementReview: formFields.placementReview,
         foodRating: Number(formFields.foodRating),
         foodReview: formFields.foodReview,
-        verified: false
+        verified: false,
       });
 
       if (files.idCard && Array.isArray(files.idCard) && files.idCard.length > 0) {
-        const file = files.idCard[0];
+        const file = files.idCard[0] as File;
         const fileContent = await fs.promises.readFile(file.filepath);
 
         try {
@@ -129,7 +143,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           });
         } catch (uploadError) {
           console.error('Error uploading to S3:', uploadError);
-          // You might want to delete the newCollege entry here if S3 upload fails
+          // Rollback if upload fails
+          await College.findByIdAndDelete(newCollege._id);
+          return res.status(500).json({ message: 'Error uploading to S3', uploadError });
         } finally {
           // Clean up the temp file
           await fs.promises.unlink(file.filepath);
@@ -139,7 +155,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(201).json(newCollege);
     });
   } catch (error) {
-    console.error('Error creating college:', error);
-    res.status(500).json({ message: 'Error creating college', error });
+    console.error('Error creating review:', error);
+    res.status(500).json({ message: 'Error creating review', error });
   }
 }

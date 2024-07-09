@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.609.0",
     "@google/generative-ai": "^0.14.0",
     "@radix-ui/react-label": "^2.0.2",
     "@tabler/icons": "^3.5.0",
