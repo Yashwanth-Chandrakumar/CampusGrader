@@ -10,6 +10,14 @@ const collegeSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  verified: {
+    type: Boolean,
+    default: false
+  },
+  idCardUploadId: {
+    type: String,
+    default: null
+  },
   academicRating: {
     type: Number,
     required: true,

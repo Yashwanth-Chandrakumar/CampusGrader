@@ -53,7 +53,12 @@ const Rate: React.FC<RateProps> = ({ college }) => {
     food: {},
   });
   const [containsNSFW, setContainsNSFW] = useState<{ [key: string]: boolean }>({});
+  const [idCard, setIdCard] = useState(null);
 
+  const handleIDCardUpload = (file) => {
+    setIdCard(file);
+  };
+  
   // Initialize Fuse for fuzzy matching
   const fuse = new Fuse(dictionary, { includeScore: true });
 
@@ -203,6 +208,20 @@ const Rate: React.FC<RateProps> = ({ college }) => {
           {renderReviewFields('food', 'Food')}
 
           {error && <p className="text-red-500 dark:text-red-400 mb-4">{error}</p>}
+          // Add this inside your form
+<div className="mb-6">
+  <label htmlFor="idCard" className="block text-sm font-medium text-gray-700">
+    Upload ID Card (for verified review)
+  </label>
+  <input
+    type="file"
+    id="idCard"
+    name="idCard"
+    accept="image/*"
+    className="mt-1 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
+    onChange={(e) => handleIDCardUpload(e.target.files[0])}
+  />
+</div>
 
           <button 
             type="submit" 
