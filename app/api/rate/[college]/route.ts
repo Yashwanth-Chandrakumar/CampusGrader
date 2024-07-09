@@ -3,9 +3,10 @@ import { uploadFileToS3 } from '@/lib/uploadFiletoS3';
 import College from '@/models/collegeSchema';
 import IdCardUpload from '@/models/idSchema';
 import User from '@/models/userSchema';
-import formidable, { Fields, File, Files } from 'formidable';
+import { Fields, File, Files, IncomingForm } from 'formidable';
 import fs from 'fs';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest } from 'next';
+import { NextResponse } from 'next/server';
 
 export const config = {
   api: {
@@ -20,19 +21,15 @@ const getFieldAsString = (field: string | string[] | undefined): string => {
   return field || '';
 };
 
-export const POST = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
-  }
-
+export const POST = async (req: NextApiRequest) => {
   try {
     await connectMongoDB();
 
-    const form = new formidable.IncomingForm();
+    const form = new IncomingForm();
     form.parse(req, async (err: any, fields: Fields, files: Files) => {
       if (err) {
         console.error('Error parsing form:', err);
-        return res.status(500).json({ message: 'Error parsing form' });
+        return NextResponse.json({ message: 'Error parsing form' }, { status: 500 });
       }
 
       const formFields = {
@@ -57,12 +54,12 @@ export const POST = async (req: NextApiRequest, res: NextApiResponse) => {
       };
 
       if (!formFields.name || !formFields.email) {
-        return res.status(400).json({ message: 'Name and email are required' });
+        return NextResponse.json({ message: 'Name and email are required' }, { status: 400 });
       }
 
       const user = await User.findOne({ email: formFields.email });
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return NextResponse.json({ message: 'User not found' }, { status: 404 });
       }
 
       const newCollege = await College.create({
@@ -102,21 +99,21 @@ export const POST = async (req: NextApiRequest, res: NextApiResponse) => {
           await IdCardUpload.create({
             userId: user._id,
             collegeReviewId: newCollege._id,
-            imageUrl: uploadResult.Location,
+            imageUrl: uploadResult,
           });
         } catch (uploadError) {
           console.error('Error uploading to S3:', uploadError);
           await College.findByIdAndDelete(newCollege._id);
-          return res.status(500).json({ message: 'Error uploading to S3', uploadError });
+          return NextResponse.json({ message: 'Error uploading to S3', uploadError }, { status: 500 });
         } finally {
           await fs.promises.unlink(file.filepath);
         }
       }
 
-      res.status(201).json(newCollege);
+      return NextResponse.json(newCollege, { status: 201 });
     });
   } catch (error) {
     console.error('Error creating review:', error);
-    res.status(500).json({ message: 'Error creating review', error });
+    return NextResponse.json({ message: 'Error creating review', error }, { status: 500 });
   }
 };
