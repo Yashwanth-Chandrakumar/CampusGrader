@@ -6,8 +6,14 @@ import { NextResponse } from 'next/server';
 
 async function deleteFromS3(imageUrl: string) {
   const key = imageUrl.split('/').pop(); // Extract the key from the URL
+  const bucketName = process.env.AWS_S3_BUCKET_NAME;
+
+  if (!bucketName || !key) {
+    throw new Error('Bucket name or key is undefined');
+  }
+
   const params = {
-    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Bucket: bucketName,
     Key: key,
   };
 
@@ -47,10 +53,13 @@ export async function POST(req: Request) {
     await IdCardUpload.findByIdAndDelete(idCardUploadId);
 
     return NextResponse.json({ message: 'ID card verified and processed successfully' });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error verifying ID card:', error);
+
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+
     return NextResponse.json(
-      { message: 'Error verifying ID card', error: error.message },
+      { message: 'Error verifying ID card', error: errorMessage },
       { status: 500 }
     );
   }

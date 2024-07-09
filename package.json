@@ -35,6 +35,7 @@
   "devDependencies": {
     "@types/bad-words": "^3.0.3",
     "@types/bcryptjs": "^2.4.6",
+    "@types/formidable": "^3.4.5",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.15",

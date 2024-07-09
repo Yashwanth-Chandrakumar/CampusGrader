@@ -3,7 +3,7 @@ import { s3 } from '@/lib/s3';
 import College from '@/models/collegeSchema';
 import IdCardUpload from '@/models/idSchema';
 import User from '@/models/userSchema';
-import formidable from 'formidable';
+import formidable, { Fields, Files } from 'formidable';
 import fs from 'fs';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -43,54 +43,81 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await connectMongoDB();
 
     const form = new formidable.IncomingForm();
-    form.parse(req, async (err, fields: FormFields, files) => {
+    form.parse(req, async (err: any, fields: Fields, files: Files) => {
       if (err) {
         console.error('Error parsing form:', err);
         return res.status(500).json({ message: 'Error parsing form' });
       }
 
+      // Ensure fields match FormFields structure
+      const formFields: FormFields = {
+        name: fields.name as string,
+        email: fields.email as string,
+        academicRating: fields.academicRating as string,
+        academicReview: fields.academicReview as string,
+        facultyRating: fields.facultyRating as string,
+        facultyReview: fields.facultyReview as string,
+        infrastructureRating: fields.infrastructureRating as string,
+        infrastructureReview: fields.infrastructureReview as string,
+        accommodationRating: fields.accommodationRating as string,
+        accommodationReview: fields.accommodationReview as string,
+        socialLifeRating: fields.socialLifeRating as string,
+        socialLifeReview: fields.socialLifeReview as string,
+        feeRating: fields.feeRating as string,
+        feeReview: fields.feeReview as string,
+        placementRating: fields.placementRating as string,
+        placementReview: fields.placementReview as string,
+        foodRating: fields.foodRating as string,
+        foodReview: fields.foodReview as string,
+      };
+
       // Basic validation
-      if (!fields.name || !fields.email) {
+      if (!formFields.name || !formFields.email) {
         return res.status(400).json({ message: 'Name and email are required' });
       }
 
-      const user = await User.findOne({ email: fields.email });
+      const user = await User.findOne({ email: formFields.email });
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
 
       const newCollege = await College.create({
-        name: fields.name,
+        name: formFields.name,
         userId: user._id,
-        academicRating: Number(fields.academicRating),
-        academicReview: fields.academicReview,
-        facultyRating: Number(fields.facultyRating),
-        facultyReview: fields.facultyReview,
-        infrastructureRating: Number(fields.infrastructureRating),
-        infrastructureReview: fields.infrastructureReview,
-        accommodationRating: Number(fields.accommodationRating),
-        accommodationReview: fields.accommodationReview,
-        socialLifeRating: Number(fields.socialLifeRating),
-        socialLifeReview: fields.socialLifeReview,
-        feeRating: Number(fields.feeRating),
-        feeReview: fields.feeReview,
-        placementRating: Number(fields.placementRating),
-        placementReview: fields.placementReview,
-        foodRating: Number(fields.foodRating),
-        foodReview: fields.foodReview,
+        academicRating: Number(formFields.academicRating),
+        academicReview: formFields.academicReview,
+        facultyRating: Number(formFields.facultyRating),
+        facultyReview: formFields.facultyReview,
+        infrastructureRating: Number(formFields.infrastructureRating),
+        infrastructureReview: formFields.infrastructureReview,
+        accommodationRating: Number(formFields.accommodationRating),
+        accommodationReview: formFields.accommodationReview,
+        socialLifeRating: Number(formFields.socialLifeRating),
+        socialLifeReview: formFields.socialLifeReview,
+        feeRating: Number(formFields.feeRating),
+        feeReview: formFields.feeReview,
+        placementRating: Number(formFields.placementRating),
+        placementReview: formFields.placementReview,
+        foodRating: Number(formFields.foodRating),
+        foodReview: formFields.foodReview,
         verified: false
       });
 
-      if (files.idCard && files.idCard[0]) {
+      if (files.idCard && Array.isArray(files.idCard) && files.idCard.length > 0) {
         const file = files.idCard[0];
         const fileContent = await fs.promises.readFile(file.filepath);
 
         try {
+          const bucketName = process.env.AWS_S3_BUCKET_NAME;
+          if (!bucketName) {
+            throw new Error('AWS_S3_BUCKET_NAME is not defined');
+          }
+
           const params = {
-            Bucket: process.env.AWS_S3_BUCKET_NAME,
+            Bucket: bucketName,
             Key: `id-cards/${newCollege._id}-${file.originalFilename}`,
             Body: fileContent,
-            ContentType: file.mimetype,
+            ContentType: file.mimetype || undefined,
           };
 
           const uploadResult = await s3.upload(params).promise();
