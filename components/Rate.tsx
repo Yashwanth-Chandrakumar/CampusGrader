@@ -130,35 +130,45 @@ const Rate: React.FC<RateProps> = ({ college }) => {
     }
   
     try {
-      const formDataToSubmit = new FormData();
-      formDataToSubmit.append("name", college);
-      formDataToSubmit.append("email", session?.user?.email || "");
+      const reviewData = {
+        email: session?.user?.email || "",
+        ...Object.entries(formData).reduce((acc, [key, value]) => ({
+          ...acc,
+          [`${key}Rating`]: value.rating,
+          [`${key}Review`]: value.review,
+        }), {}),
+      };
   
-      Object.entries(formData).forEach(([key, value]) => {
-        formDataToSubmit.append(`${key}Rating`, value.rating.toString());
-        formDataToSubmit.append(`${key}Review`, value.review);
-      });
-  
-      if (idCard) {
-        formDataToSubmit.append("idCard", idCard);
-      }
-  
-      // Log formDataToSubmit for debugging
-      for (let pair of formDataToSubmit.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
-  
-      const response = await fetch(`/api/rate/${college}`, {
+      const response = await fetch(`/api/rate/${encodeURIComponent(college)}`, {
         method: "POST",
-        body: formDataToSubmit,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reviewData),
       });
   
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to add review");
       }
+
+      if (idCard) {
+        const imageFormData = new FormData();
+        imageFormData.append('file', idCard);
+        imageFormData.append('collegeId', '888888');
   
-      router.push(`/view/${college}`);
+        const imageResponse = await fetch('/api/s3', {
+          method: 'POST',
+          body: imageFormData,
+        });
+  
+        if (!imageResponse.ok) {
+          const errorData = await imageResponse.json();
+          throw new Error(errorData.message || "Failed to upload image");
+        }
+      }
+  
+      router.push(`/view/${encodeURIComponent(college)}`);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message || "Failed to add review. Please try again.");
@@ -167,7 +177,6 @@ const Rate: React.FC<RateProps> = ({ college }) => {
       }
     }
   };
-  
 
   const renderReviewFields = (field: keyof FormDataType, label: string) => (
     <div className="mb-6">
