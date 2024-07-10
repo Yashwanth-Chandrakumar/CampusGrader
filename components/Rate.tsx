@@ -1,3 +1,4 @@
+// Import necessary libraries and components
 "use client";
 import badWords from "bad-words";
 import Fuse from "fuse.js";
@@ -121,14 +122,14 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-  
+
     const hasNSFWContent = Object.values(containsNSFW).some((value) => value === true);
-  
+
     if (hasNSFWContent) {
       setError("Your review contains inappropriate language. Please revise before submitting.");
       return;
     }
-  
+
     try {
       const reviewData = {
         email: session?.user?.email || "",
@@ -138,7 +139,8 @@ const Rate: React.FC<RateProps> = ({ college }) => {
           [`${key}Review`]: value.review,
         }), {}),
       };
-  
+
+      // First, post the review
       const response = await fetch(`/api/rate/${encodeURIComponent(college)}`, {
         method: "POST",
         headers: {
@@ -146,28 +148,31 @@ const Rate: React.FC<RateProps> = ({ college }) => {
         },
         body: JSON.stringify(reviewData),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to add review");
       }
 
+      const reviewResult = await response.json();
+
+      // If there is an ID card to upload, do it
       if (idCard) {
         const imageFormData = new FormData();
         imageFormData.append('file', idCard);
-        imageFormData.append('collegeId', '888888');
-  
+        imageFormData.append('collegeId', reviewResult._id); // Use the ID from the review result
+
         const imageResponse = await fetch('/api/s3', {
           method: 'POST',
           body: imageFormData,
         });
-  
+
         if (!imageResponse.ok) {
           const errorData = await imageResponse.json();
           throw new Error(errorData.message || "Failed to upload image");
         }
       }
-  
+
       router.push(`/view/${encodeURIComponent(college)}`);
     } catch (err: unknown) {
       if (err instanceof Error) {
