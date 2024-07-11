@@ -1,26 +1,28 @@
-// app/api/gets3/route.ts
-import { connectMongoDB } from "@/lib/mongodb";
-import College from "@/models/collegeSchema"; // Import the College model
-import IdCardUpload from "@/models/idSchema";
-import User from "@/models/userSchema"; // Import the User model
-import { NextResponse } from "next/server";
 
-// Ensure schemas are registered by performing a dummy operation
-function registerSchemas() {
-  User.findOne(); // Dummy operation to ensure the schema is registered
-  College.findOne(); // Dummy operation to ensure the schema is registered
-}
+import { connectMongoDB } from "@/lib/mongodb";
+import IdCardUpload from "@/models/idSchema";
+import User from "@/models/userSchema";
+import College from "@/models/collegeSchema";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
     await connectMongoDB();
-    registerSchemas(); // Call the function to register schemas
+    console.log("Connected to MongoDB");
 
     const idv = await IdCardUpload.find().populate('userId').populate('collegeReviewId');
-    console.log("verify: ", idv);
-    return NextResponse.json({ idv });
+    console.log("Fetched records: ", idv);
+
+    if (idv.length === 0) {
+      console.log("No records found in IdCardUpload collection");
+    }
+
+    // Create a response with disabled caching
+    const response = NextResponse.json({ idv });
+    response.headers.set('Cache-Control', 'no-store');
+    return response;
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching reviews:", error);
     return NextResponse.json({ error: 'An error occurred while fetching reviews.' }, { status: 500 });
   }
 }
