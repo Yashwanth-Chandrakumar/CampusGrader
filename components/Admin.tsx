@@ -76,29 +76,29 @@ const Admin = () => {
     setSelectedUser(null);
   };
 
-  const handleAccept = async (collegeId: string) => {
+  const handleAccept = async (user: IUser) => {
+    if (!user.collegeReviewId || !user.collegeReviewId._id || !user._id || !user.imageUrl) {
+      console.error('Missing required fields for verification update');
+      return;
+    }
+
     try {
       const response = await fetch('/api/updateverify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ collegeId, verified: true }),
+        body: JSON.stringify({
+          collegeId: user.collegeReviewId._id,
+          verified: true,
+          idUploadId: user._id,
+          imageUrl: user.imageUrl,
+        }),
       });
 
       if (response.ok) {
         setAllUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user.collegeReviewId && user.collegeReviewId._id === collegeId
-              ? {
-                  ...user,
-                  collegeReviewId: {
-                    ...user.collegeReviewId,
-                    verified: true,
-                  },
-                }
-              : user
-          )
+          prevUsers.filter((u) => u._id !== user._id)
         );
       } else {
         console.error('Failed to update verification');
@@ -134,7 +134,7 @@ const Admin = () => {
                 {item.collegeReviewId ? item.collegeReviewId.name : "No College Information"}
               </h2>
               <div className="flex mt-4">
-                <button className="bg-green-500 text-white py-2 px-4 rounded-md mr-2" onClick={() => item.collegeReviewId && handleAccept(item.collegeReviewId._id)}>Accept</button>
+                <button className="bg-green-500 text-white py-2 px-4 rounded-md mr-2" onClick={() => handleAccept(item)}>Accept</button>
                 <button className="bg-red-500 text-white py-2 px-4 rounded-md">Reject</button>
               </div>
             </div>
