@@ -9,6 +9,7 @@ A website where colleges are truly reviewed by their students
 2) Mongo DB
 3) Next auth
 4) Aceternity UI
+5) AWS for cloud
 
 To Do:
 1) Style the rate and view component
