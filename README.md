@@ -14,3 +14,4 @@ A website where colleges are truly reviewed by their students
 To Do:
 1) Style the rate and view component
 2) Add ranking option
+3) Create a admin page
