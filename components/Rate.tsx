@@ -226,7 +226,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
           Rate {college}
         </h1>
         <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-          Your honest feedback is valuable. Please provide genuine reviews to help future students make informed decisions.
+          Your honest feedback is valuable. Please provide genuine reviews to help future students make correct decisions.
         </p>
         <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-zinc-800 rounded-lg shadow-md p-8">
           {renderReviewFields("academic", "Academic", "Rate the quality of the academic programs, curriculum, and overall academic experience.")}
@@ -234,7 +234,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
           {renderReviewFields("infrastructure", "Infrastructure", "Rate the facilities such as classrooms, laboratories, libraries, and other physical infrastructure.")}
           {renderReviewFields("accommodation", "Accommodation", "Rate the quality and comfort of the on-campus housing or nearby accommodations.")}
           {renderReviewFields("socialLife", "Social Life", "Rate the social environment, extracurricular activities, and community engagement opportunities.")}
-          {renderReviewFields("fee", "Fee", "Rate the affordability and value for money regarding the tuition and other fees.")}
+          {renderReviewFields("fee", "Fee", "Rate the affordability and value for money regarding the tuition and other fees. Fee structure is highly welcomed.")}
           {renderReviewFields("placement", "Placement", "Rate the effectiveness of the placement cell and the opportunities provided for internships and job placements.")}
           {renderReviewFields("food", "Food", "Rate the quality, variety, and availability of food options on campus.")}
 
