@@ -5,7 +5,7 @@ import Fuse from "fuse.js";
 import { SessionProvider, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-
+import { MultiStepLoader as Loader } from "../components/ui/multi-step-loader";
 import { dictionary } from "./dictionary";
 import NavbarDemo from "./navbar";
 import Rating from "./rating/Rating";
@@ -42,6 +42,14 @@ const Rate: React.FC<RateProps> = ({ college }) => {
     placement: { ...initialReviewState },
     food: { ...initialReviewState },
   });
+  const loadingStates = [
+    { text: "Making you anonymous" },
+    { text: "Saving your review" },
+    { text: "Uploading your ID card" },
+    { text: "Finalizing submission" },
+  ];
+  const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState<string>("");
   const [suggestedCorrections, setSuggestedCorrections] = useState<SuggestedCorrectionsType>({
     academic: {},
@@ -122,14 +130,16 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
+  
     const hasNSFWContent = Object.values(containsNSFW).some((value) => value === true);
-
+  
     if (hasNSFWContent) {
       setError("Your review contains inappropriate language. Please revise before submitting.");
       return;
     }
-
+  
+    setLoading(true);
+  
     try {
       const reviewData = {
         email: session?.user?.email || "",
@@ -139,7 +149,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
           [`${key}Review`]: value.review,
         }), {}),
       };
-
+  
       // First, post the review
       const response = await fetch(`/api/rate/${encodeURIComponent(college)}`, {
         method: "POST",
@@ -148,33 +158,35 @@ const Rate: React.FC<RateProps> = ({ college }) => {
         },
         body: JSON.stringify(reviewData),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to add review");
       }
-
+  
       const reviewResult = await response.json();
-
+  
       // If there is an ID card to upload, do it
       if (idCard) {
         const imageFormData = new FormData();
         imageFormData.append('file', idCard);
         imageFormData.append('collegeId', reviewResult._id); // Use the ID from the review result
-
+  
         const imageResponse = await fetch('/api/s3', {
           method: 'POST',
           body: imageFormData,
         });
-
+  
         if (!imageResponse.ok) {
           const errorData = await imageResponse.json();
           throw new Error(errorData.message || "Failed to upload image");
         }
       }
-
+  
+      setLoading(false);
       router.push(`/view/${encodeURIComponent(college)}`);
     } catch (err: unknown) {
+      setLoading(false);
       if (err instanceof Error) {
         setError(err.message || "Failed to add review. Please try again.");
       } else {
@@ -182,6 +194,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
       }
     }
   };
+  
 
   const renderReviewFields = (field: keyof FormDataType, label: string, description: string) => (
     <div className="mb-6">
@@ -219,7 +232,12 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   );
 
   return (
+    
     <div className="flex flex-col items-center min-h-screen py-2 bg-zinc-50 dark:bg-zinc-900">
+      {loading && (
+  <Loader loadingStates={loadingStates} loading={loading} duration={2000} />
+)}
+
       <div className="w-full max-w-4xl mt-32">
         <h1 className="text-2xl pl-2 md:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">
           Rate {college}
