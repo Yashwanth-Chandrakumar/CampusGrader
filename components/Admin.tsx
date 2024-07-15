@@ -77,36 +77,68 @@ const Admin = () => {
   };
 
   const handleAccept = async (user: IUser) => {
-    if (!user.collegeReviewId || !user.collegeReviewId._id || !user._id || !user.imageUrl) {
-      console.error('Missing required fields for verification update');
-      return;
-    }
+  if (!user.collegeReviewId || !user.collegeReviewId._id || !user._id || !user.imageUrl) {
+    console.error('Missing required fields for verification update');
+    return;
+  }
 
-    try {
-      const response = await fetch('/api/updateverify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          collegeId: user.collegeReviewId._id,
-          verified: true,
-          idUploadId: user._id,
-          imageUrl: user.imageUrl,
-        }),
-      });
+  try {
+    const response = await fetch('/api/updateverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        collegeId: user.collegeReviewId._id,
+        verified: true,
+        idUploadId: user._id,
+        imageUrl: user.imageUrl,
+      }),
+    });
 
-      if (response.ok) {
-        setAllUsers((prevUsers) =>
-          prevUsers.filter((u) => u._id !== user._id)
-        );
-      } else {
-        console.error('Failed to update verification');
-      }
-    } catch (error) {
-      console.error('An error occurred while updating verification', error);
+    if (response.ok) {
+      setAllUsers((prevUsers) =>
+        prevUsers.filter((u) => u._id !== user._id)
+      );
+    } else {
+      console.error('Failed to update verification');
     }
-  };
+  } catch (error) {
+    console.error('An error occurred while updating verification', error);
+  }
+};
+const handleReject = async (user: IUser) => {
+  if (!user.collegeReviewId || !user.collegeReviewId._id || !user._id || !user.imageUrl) {
+    console.error('Missing required fields for verification update');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/updateverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        collegeId: user.collegeReviewId._id,
+        verified: false,
+        idUploadId: user._id,
+        imageUrl: user.imageUrl,
+      }),
+    });
+
+    if (response.ok) {
+      setAllUsers((prevUsers) =>
+        prevUsers.filter((u) => u._id !== user._id)
+      );
+    } else {
+      console.error('Failed to update verification');
+    }
+  } catch (error) {
+    console.error('An error occurred while updating verification', error);
+  }
+};
+
 
   return (
     <div className='flex flex-col items-center min-h-screen py-2 bg-zinc-50 dark:bg-zinc-900'>
@@ -135,7 +167,7 @@ const Admin = () => {
               </h2>
               <div className="flex mt-4">
                 <button className="bg-green-500 text-white py-2 px-4 rounded-md mr-2" onClick={() => handleAccept(item)}>Accept</button>
-                <button className="bg-red-500 text-white py-2 px-4 rounded-md">Reject</button>
+                <button className="bg-red-500 text-white py-2 px-4 rounded-md" onClick={() => handleReject(item)}>Reject</button>
               </div>
             </div>
           </div>
