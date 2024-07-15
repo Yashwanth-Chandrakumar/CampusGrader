@@ -186,7 +186,6 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   const renderReviewFields = (field: keyof FormDataType, label: string, description: string) => (
     <div className="mb-6">
       <h3 className="font-semibold mb-2 text-gray-800 dark:text-gray-200">{label}</h3>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{description}</p>
       <Rating
         isEditable={true}
         rating={formData[field].rating}
@@ -197,7 +196,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
         value={formData[field].review}
         onChange={(e) => handleReviewChange(field, "review", e.target.value)}
         className="w-full p-2 border rounded bg-white dark:bg-zinc-800 text-gray-800 dark:text-gray-200 mb-2"
-        placeholder="Review"
+        placeholder={description}
         rows={4}
       />
       {Object.entries(suggestedCorrections[field]).map(([original, corrected]) => (
@@ -234,7 +233,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
           {renderReviewFields("infrastructure", "Infrastructure", "Rate the facilities such as classrooms, laboratories, libraries, and other physical infrastructure.")}
           {renderReviewFields("accommodation", "Accommodation", "Rate the quality and comfort of the on-campus housing or nearby accommodations.")}
           {renderReviewFields("socialLife", "Social Life", "Rate the social environment, extracurricular activities, and community engagement opportunities.")}
-          {renderReviewFields("fee", "Fee", "Rate the affordability and value for money regarding the tuition and other fees. Fee structure is highly welcomed.")}
+          {renderReviewFields("fee", "Fee", "Please provide details on the fee structure for both tuition and hostel accommodations, if available. Rate the affordability and value for money of the tuition and other fees.")}
           {renderReviewFields("placement", "Placement", "Rate the effectiveness of the placement cell and the opportunities provided for internships and job placements.")}
           {renderReviewFields("food", "Food", "Rate the quality, variety, and availability of food options on campus.")}
 
