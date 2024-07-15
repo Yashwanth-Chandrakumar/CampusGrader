@@ -1,3 +1,4 @@
+import { IconRosetteDiscountCheckFilled } from '@tabler/icons-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from "react";
 import NavbarDemo from "./navbar";
@@ -9,6 +10,7 @@ const {
 } = require("@google/generative-ai");
 type Review = {
   createdAt: string;
+  verified:boolean;
   academicRating: number;
   academicReview: string;
   facultyRating: number;
@@ -171,9 +173,12 @@ const View = ({ college }: { college: string }) => {
   
       return (
         <div key={index} className="mb-4 p-4 bg-gray-100 dark:bg-zinc-700 rounded-lg shadow">
+          <div className='flex justify-between'>
           <div className="flex items-center mb-2">
             <p className="text-xl font-semibold text-gray-800 dark:text-gray-200">Anonymous</p>
             <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">{reviewDate}</span>
+          </div>
+          {review.verified &&( <div><IconRosetteDiscountCheckFilled color='yellow' /></div>)}
           </div>
           <Rating isEditable={false} rating={ratingValue} setRating={() => {}} />
           <p className="mt-2 text-gray-800 dark:text-gray-200">{reviewText}</p> {/* Add this line to display the review text */}
