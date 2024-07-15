@@ -233,21 +233,38 @@ const Rate: React.FC<RateProps> = ({ college }) => {
           {renderReviewFields("food", "Food")}
 
           <div className="mb-6">
-            <label htmlFor="idCard" className="block text-sm font-medium text-gray-700">
-              Upload ID Card (for verified review)
-            </label>
-            <input
-              type="file"
-              id="idCard"
-              name="idCard"
-              accept="image/*"
-              className="mt-1 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  handleIDCardUpload(e.target.files[0]);
-                }
-              }}
-            />
+          <label htmlFor="idCard" className="block text-sm font-medium text-gray-800 dark:text-gray-200">
+        Upload ID Card
+      </label>
+      <p className="text-sm my-2 text-gray-500 dark:text-gray-400">
+        We use a verification tick mark to show that your review is genuine. Rest assured, your files are not stored anywhere.
+      </p>
+      <div className="mt-1 flex items-center">
+        <input
+          type="file"
+          id="idCard"
+          name="idCard"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              handleIDCardUpload(e.target.files[0]);
+            }
+          }}
+        />
+        <label
+          htmlFor="idCard"
+          className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-700 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          <svg className="h-5 w-5 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v16h16V4H4zm16 0v16H4V4h16zm-9 12H9v-2h2v2zm4 0h-2v-2h2v2zm1-6H7V7h10v3z" />
+          </svg>
+          <span className="ml-2">Choose File</span>
+        </label>
+        {idCard && <span className="ml-4 text-sm text-gray-500 dark:text-gray-400">{idCard.name}</span>}
+</div>
+
+
           </div>
           {error && <p className="text-red-500 dark:text-red-400 mb-4">{error}</p>}
 
