@@ -239,7 +239,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
 
           <div className="mb-6">
             <label htmlFor="idCard" className="block text-sm font-medium text-gray-800 dark:text-gray-200">
-              Upload ID Card
+              Upload College ID Card
             </label>
             <p className="text-sm my-2 text-gray-500 dark:text-gray-400">
               We use a verification tick mark to show that your review is genuine. Rest assured, your files are not stored anywhere.
