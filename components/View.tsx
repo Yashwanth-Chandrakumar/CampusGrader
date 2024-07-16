@@ -77,6 +77,8 @@ const View = ({ college }: { college: string }) => {
   const [averageRating, setAverageRating] = useState<number>(0);
   const [starCounts, setStarCounts] = useState<StarCounts>({ 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 });
   const [collegeInfo, setCollegeInfo] = useState<string | null>(null);
+  const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
+
   useEffect(() => {
     fetchReviews(college).then((reviews) => {
       setReviews(reviews);
@@ -160,7 +162,12 @@ const View = ({ college }: { college: string }) => {
     const ratingKey = `${category}Rating` as keyof Review;
     const reviewKey = `${category}Review` as keyof Review;
   
-    const filteredReviews = reviews.filter(review => review[ratingKey] !== undefined);
+    const filteredReviews = reviews.filter(review => {
+      if (showVerifiedOnly) {
+        return review.verified && review[ratingKey] !== undefined;
+      }
+      return review[ratingKey] !== undefined;
+    });
   
     if (filteredReviews.length === 0) {
       return <p className="text-xl text-center mt-4 dark:text-gray-200">Be the first to review the college.</p>;
@@ -174,11 +181,15 @@ const View = ({ college }: { college: string }) => {
       return (
         <div key={index} className="mb-4 p-4 bg-gray-100 dark:bg-zinc-700 rounded-lg shadow">
           <div className='flex justify-between'>
-          <div className="flex items-center mb-2">
-            <p className="text-xl font-semibold text-gray-800 dark:text-gray-200">Anonymous</p>
-            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">{reviewDate}</span>
-          </div>
-          {review.verified &&( <div><IconRosetteDiscountCheckFilled color='yellow' /></div>)}
+            <div className="flex items-center mb-2">
+              <p className="text-xl font-semibold text-gray-800 dark:text-gray-200">Anonymous</p>
+              <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">{reviewDate}</span>
+            </div>
+            {review.verified && (
+              <div>
+                <IconRosetteDiscountCheckFilled color='yellow' />
+              </div>
+            )}
           </div>
           <Rating isEditable={false} rating={ratingValue} setRating={() => {}} />
           <p className="mt-2 text-gray-800 dark:text-gray-200">{reviewText}</p> {/* Add this line to display the review text */}
@@ -186,6 +197,7 @@ const View = ({ college }: { college: string }) => {
       );
     });
   };
+  
   
 
 
@@ -246,9 +258,24 @@ const View = ({ college }: { college: string }) => {
           </div>
 
           <div className="mt-8">
+            <div className='flex justify-between'>
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
               {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Reviews
             </h2>
+            <div className="flex items-center mb-4">
+  <input
+    type="checkbox"
+    id="verifiedOnly"
+    checked={showVerifiedOnly}
+    onChange={(e) => setShowVerifiedOnly(e.target.checked)}
+    className="mr-2 h-5 w-5"
+  />
+  <label htmlFor="verifiedOnly" className="text-gray-800 dark:text-gray-200">
+        Verified Only
+  </label>
+</div>
+
+            </div>
             {renderReviews(activeTab)}
           </div>
 
