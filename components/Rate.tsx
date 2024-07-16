@@ -1,4 +1,5 @@
 "use client";
+import { IconRosetteDiscountCheckFilled } from "@tabler/icons-react";
 import badWords from "bad-words";
 import Fuse from "fuse.js";
 import { SessionProvider, useSession } from "next-auth/react";
@@ -273,8 +274,8 @@ const Rate: React.FC<RateProps> = ({ college }) => {
             <label htmlFor="idCard" className="block text-sm font-medium text-gray-800 dark:text-gray-200">
               Upload College ID Card
             </label>
-            <p className="text-sm my-2 text-gray-500 dark:text-gray-400">
-              We use a verification tick mark to show that your review is genuine. Rest assured, your files are not stored anywhere.
+            <p className="text-sm my-2 text-yellow-300 inline flex">
+              We use a verification tick mark  &nbsp;<IconRosetteDiscountCheckFilled color='yellow' />&nbsp;  to show that your review is genuine. Rest assured, your files are not stored anywhere.
             </p>
             <div className="mt-1 flex items-center">
               <input
