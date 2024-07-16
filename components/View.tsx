@@ -184,14 +184,14 @@ const View = ({ college }: { college: string }) => {
     return filteredReviews.map((review, index) => {
       const reviewDate = formatDistanceToNow(new Date(review.createdAt), { addSuffix: true });
       const ratingValue = typeof review[ratingKey] === 'number' ? review[ratingKey] as number : 0;
-      const reviewText = review[reviewKey] as string; // Add this line to get the review text
+      const reviewText = review[reviewKey] as string;
   
       return (
         <div key={index} className="mb-4 p-4 bg-gray-100 dark:bg-zinc-700 rounded-lg shadow">
           <div className='flex justify-between'>
             <div className="flex items-center mb-2">
               <p className="text-xl font-semibold text-gray-800 dark:text-gray-200">Anonymous</p>
-              <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">{reviewDate}</span>
+              <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">{reviewDate.replace('about ', '')}</span>
             </div>
             {review.verified && (
               <div>
