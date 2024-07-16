@@ -1,5 +1,6 @@
 import { IconRosetteDiscountCheckFilled } from '@tabler/icons-react';
 import { formatDistanceToNow } from 'date-fns';
+import Link from 'next/link';
 import { useEffect, useState } from "react";
 import NavbarDemo from "./navbar";
 import Rating from "./rating/Rating";
@@ -170,7 +171,14 @@ const View = ({ college }: { college: string }) => {
     });
   
     if (filteredReviews.length === 0) {
-      return <p className="text-xl text-center mt-4 dark:text-gray-200">Be the first to review the college.</p>;
+      return (<p className="text-xl text-center mt-4 dark:text-gray-200">Be the first to review the college.
+      <Link
+                      href={`/rate/${encodeURIComponent(college)}`}
+                      className="bg-gradient-to-br relative px-10 group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] flex items-center justify-center"
+                    >
+                      Rate
+                    </Link>
+      </p>);
     }
   
     return filteredReviews.map((review, index) => {
