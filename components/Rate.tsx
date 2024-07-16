@@ -1,4 +1,3 @@
-// Import necessary libraries and components
 "use client";
 import badWords from "bad-words";
 import Fuse from "fuse.js";
@@ -49,7 +48,6 @@ const Rate: React.FC<RateProps> = ({ college }) => {
     { text: "Finalizing submission" },
   ];
   const [loading, setLoading] = useState(false);
-
   const [error, setError] = useState<string>("");
   const [suggestedCorrections, setSuggestedCorrections] = useState<SuggestedCorrectionsType>({
     academic: {},
@@ -127,6 +125,20 @@ const Rate: React.FC<RateProps> = ({ college }) => {
     });
   };
 
+  const validateFile = (file: File) => {
+    const validFormats = ["image/jpeg", "image/png", "image/gif"];
+    const maxSize = 20 * 1024 * 1024; // 20MB
+    if (!validFormats.includes(file.type)) {
+      setError("Invalid file format. Please upload a JPEG, PNG, or GIF image.");
+      return false;
+    }
+    if (file.size > maxSize) {
+      setError("File size too large. Please upload an image smaller than 2MB.");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -135,6 +147,10 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   
     if (hasNSFWContent) {
       setError("Your review contains inappropriate language. Please revise before submitting.");
+      return;
+    }
+
+    if (idCard && !validateFile(idCard)) {
       return;
     }
   
@@ -194,7 +210,6 @@ const Rate: React.FC<RateProps> = ({ college }) => {
       }
     }
   };
-  
 
   const renderReviewFields = (field: keyof FormDataType, label: string, description: string) => (
     <div className="mb-6">
@@ -232,17 +247,16 @@ const Rate: React.FC<RateProps> = ({ college }) => {
   );
 
   return (
-    
     <div className="flex flex-col items-center min-h-screen py-2 bg-zinc-50 dark:bg-zinc-900">
       {loading && (
-  <Loader loadingStates={loadingStates} loading={loading} duration={2000} />
-)}
+        <Loader loadingStates={loadingStates} loading={loading} duration={2000} />
+      )}
 
       <div className="w-full max-w-4xl mt-32">
         <h1 className="text-2xl pl-2 md:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">
-          Rate {college}
+        {college}
         </h1>
-        <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
+        <p className="text-lg pl-2 text-gray-700 dark:text-gray-300 mb-6">
           Your honest feedback is valuable. Please provide genuine reviews to help future students make correct decisions.
         </p>
         <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-zinc-800 rounded-lg shadow-md p-8">
@@ -293,6 +307,7 @@ const Rate: React.FC<RateProps> = ({ college }) => {
           <button
             type="submit"
             className="bg-gradient-to-br relative group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+            disabled={loading}
           >
             Submit Review
           </button>

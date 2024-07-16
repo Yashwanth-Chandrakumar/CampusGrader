@@ -1,10 +1,8 @@
 "use client";
 import {
-  HoveredLink,
   Menu,
   MenuItem,
-  ProductItem,
-  ProfileItem,
+  ProfileItem
 } from "@/components/ui/navbar-menu";
 import { cn } from "@/utils/cn";
 import { IconMoon, IconSun, IconUser } from "@tabler/icons-react";
@@ -59,15 +57,15 @@ function Navbar({ className }: { className?: string }) {
         >
           {isDarkMode ? <IconMoon size={25} /> : <IconSun size={25} />}
         </button>
-        <MenuItem setActive={setActive} active={active} item="Services">
+        {/* <MenuItem setActive={setActive} active={active} item="Services">
           <div className="flex flex-col space-y-4 text-sm">
             <HoveredLink href="/web-dev">Web Development</HoveredLink>
             <HoveredLink href="/interface-design">Interface Design</HoveredLink>
             <HoveredLink href="/seo">Search Engine Optimization</HoveredLink>
             <HoveredLink href="/branding">Branding</HoveredLink>
           </div>
-        </MenuItem>
-        <MenuItem setActive={setActive} active={active} item="Products">
+        </MenuItem> */}
+        {/* <MenuItem setActive={setActive} active={active} item="Products">
           <div className="text-sm grid gap-10 p-4 md:grid-cols-2 sm:grid-cols-1">
             <ProductItem
               title="Algochurn"
@@ -94,15 +92,15 @@ function Navbar({ className }: { className?: string }) {
               description="Respond to government RFPs, RFIs and RFQs 10x faster using AI"
             />
           </div>
-        </MenuItem>
-        <MenuItem setActive={setActive} active={active} item="Pricing">
+        </MenuItem> */}
+        {/* <MenuItem setActive={setActive} active={active} item="Pricing">
           <div className="flex flex-col space-y-4 text-sm">
             <HoveredLink href="/hobby">Hobby</HoveredLink>
             <HoveredLink href="/individual">Individual</HoveredLink>
             <HoveredLink href="/team">Team</HoveredLink>
             <HoveredLink href="/enterprise">Enterprise</HoveredLink>
           </div>
-        </MenuItem>
+        </MenuItem> */}
         {session && session.user &&
           <MenuItem setActive={setActive} active={active} item="" icon={<IconUser />} >
             <ProfileItem title={session.user.name ?? 'No Name'} description={session.user.email ?? 'No Email'} />
