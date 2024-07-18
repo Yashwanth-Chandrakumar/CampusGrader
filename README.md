@@ -10,6 +10,3 @@ A website where colleges are truly reviewed by their students
 3) Next auth
 4) Aceternity UI
 5) AWS for cloud
-
-To Do:
-
