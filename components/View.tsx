@@ -213,7 +213,7 @@ const View = ({ college }: { college: string }) => {
                 className="text-blue-500 cursor-pointer"
                 onClick={toggleExpand}
               >
-                {isExpanded ? ' Show less' : ' View details'}
+                {isExpanded ? ' Show less' : 'Show more'}
               </span>
             )}
           </p>
