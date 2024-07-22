@@ -38,7 +38,7 @@ type StarCounts = {
 const fetchReviews = async (college: string): Promise<Review[]> => {
   const response = await fetch(`/api/getReviews/${college}`);
   const data = await response.json();
-  return data.reviews;
+  return data.reviews.sort((a: Review, b: Review) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 };
 
 const calculateAverageRating = (reviews: Review[]): number => {
