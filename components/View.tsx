@@ -9,9 +9,10 @@ const {
   HarmCategory,
   HarmBlockThreshold,
 } = require("@google/generative-ai");
+
 type Review = {
   createdAt: string;
-  verified:boolean;
+  verified: boolean;
   academicRating: number;
   academicReview: string;
   facultyRating: number;
@@ -39,8 +40,6 @@ const fetchReviews = async (college: string): Promise<Review[]> => {
   const data = await response.json();
   return data.reviews;
 };
-
-
 
 const calculateAverageRating = (reviews: Review[]): number => {
   if (reviews.length === 0) return 0;
@@ -79,6 +78,7 @@ const View = ({ college }: { college: string }) => {
   const [starCounts, setStarCounts] = useState<StarCounts>({ 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 });
   const [collegeInfo, setCollegeInfo] = useState<string | null>(null);
   const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
+  const [expandedReviews, setExpandedReviews] = useState<{ [key: number]: boolean }>({});
 
   useEffect(() => {
     fetchReviews(college).then((reviews) => {
@@ -102,13 +102,13 @@ const View = ({ college }: { college: string }) => {
             {
               role: "user",
               parts: [
-                {text: "give a general overview info on Sri krishna college of technology, please reply like newspaper, no intro be direct. do not give info that you are completely sure for example if you do not know the contact details dont give it.\n"},
+                { text: "give a general overview info on Sri krishna college of technology, please reply like newspaper, no intro be direct. do not give info that you are completely sure for example if you do not know the contact details dont give it.\n" },
               ],
             },
             {
               role: "model",
               parts: [
-                {text: "Sri Krishna College of Technology (SKCT) is a prominent engineering college located in Coimbatore, Tamil Nadu, India. Established in 2001, the college offers a range of undergraduate and postgraduate programs in various engineering disciplines. SKCT is known for its well-equipped infrastructure, including laboratories, a spacious library, and modern classrooms. The college boasts a team of experienced faculty members dedicated to providing quality education. SKCT has strong industry collaborations, offering students valuable practical exposure and placement opportunities. The institution actively promotes research and innovation with dedicated research centers and facilities. SKCT emphasizes holistic development, including extracurricular activities, sports, and cultural events. The college has a commendable placement record with leading companies visiting the campus for recruitment. \n"},
+                { text: "Sri Krishna College of Technology (SKCT) is a prominent engineering college located in Coimbatore, Tamil Nadu, India. Established in 2001, the college offers a range of undergraduate and postgraduate programs in various engineering disciplines. SKCT is known for its well-equipped infrastructure, including laboratories, a spacious library, and modern classrooms. The college boasts a team of experienced faculty members dedicated to providing quality education. SKCT has strong industry collaborations, offering students valuable practical exposure and placement opportunities. The institution actively promotes research and innovation with dedicated research centers and facilities. SKCT emphasizes holistic development, including extracurricular activities, sports, and cultural events. The college has a commendable placement record with leading companies visiting the campus for recruitment. \n" },
               ],
             },
           ],
@@ -125,9 +125,10 @@ const View = ({ college }: { college: string }) => {
 
     fetchCollegeInfo();
   }, [college]);
+
   const formatCollegeInfo = (text: string): JSX.Element[] => {
     const lines = text.split('\n\n'); // Split into paragraphs
-  
+
     return lines.map((paragraph, index) => {
       if (paragraph.startsWith('## ')) {
         // Handle headings
@@ -158,34 +159,39 @@ const View = ({ college }: { college: string }) => {
       }
     });
   };
-  
+
   const renderReviews = (category: string) => {
     const ratingKey = `${category}Rating` as keyof Review;
     const reviewKey = `${category}Review` as keyof Review;
-  
+
     const filteredReviews = reviews.filter(review => {
       if (showVerifiedOnly) {
         return review.verified && review[ratingKey] !== undefined;
       }
       return review[ratingKey] !== undefined;
     });
-  
+
     if (filteredReviews.length === 0) {
-      return (<p className="text-xl text-center mt-4 dark:text-gray-200">Be the first to review the college.
-      <Link
-                      href={`/rate/${encodeURIComponent(college)}`}
-                      className="bg-gradient-to-br relative px-10 group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] flex items-center justify-center"
-                    >
-                      Rate
-                    </Link>
-      </p>);
+      return (
+        <p className="text-xl text-center mt-4 dark:text-gray-200">
+          Be the first to review the college.
+          <Link
+            href={`/rate/${encodeURIComponent(college)}`}
+            className="bg-gradient-to-br relative px-10 group/btn mt-2 from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] flex items-center justify-center"
+          >
+            Rate
+          </Link>
+        </p>
+      );
     }
-  
+
     return filteredReviews.map((review, index) => {
       const reviewDate = formatDistanceToNow(new Date(review.createdAt), { addSuffix: true });
       const ratingValue = typeof review[ratingKey] === 'number' ? review[ratingKey] as number : 0;
       const reviewText = review[reviewKey] as string;
-  
+      const isExpanded = expandedReviews[index] || false;
+      const toggleExpand = () => setExpandedReviews(prev => ({ ...prev, [index]: !isExpanded }));
+
       return (
         <div key={index} className="mb-4 p-4 bg-gray-100 dark:bg-zinc-700 rounded-lg shadow">
           <div className='flex justify-between'>
@@ -199,15 +205,22 @@ const View = ({ college }: { college: string }) => {
               </div>
             )}
           </div>
-          <Rating isEditable={false} rating={ratingValue} setRating={() => {}} />
-          <p className="mt-2 text-gray-800 dark:text-gray-200">{reviewText}</p> {/* Add this line to display the review text */}
+          <Rating isEditable={false} rating={ratingValue} setRating={() => { }} />
+          <p className="mt-2 text-gray-800 dark:text-gray-200">
+            {isExpanded ? reviewText : `${reviewText.slice(0, 100)}...`}
+            {reviewText.length > 100 && (
+              <span
+                className="text-blue-500 cursor-pointer"
+                onClick={toggleExpand}
+              >
+                {isExpanded ? ' Show less' : ' View details'}
+              </span>
+            )}
+          </p>
         </div>
       );
     });
   };
-  
-  
-
 
   const renderStarRatingBar = (star: number) => {
     const count = starCounts[star];
@@ -222,7 +235,7 @@ const View = ({ college }: { college: string }) => {
             style={{ width: `${percentage}%` }}
           ></div>
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{percentage }%</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">{percentage}%</p>
       </div>
     );
   };
@@ -234,30 +247,29 @@ const View = ({ college }: { college: string }) => {
         <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">{college}</h1>
         <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-md p-8">
           <div className="flex md:flex-row flex-col  justify-around items-center">
-          <div className="flex flex-col  justify-between items-center mb-6">
-            <div className="flex flex-col items-center mb-4 sm:mb-0">
-              <div className="flex flex-row justify-around">
-              <p className="text-3xl pr-4 -mt-1.5 font-semibold text-gray-800 dark:text-gray-200">{averageRating.toFixed(1)}</p>
-              <Rating isEditable={false} rating={averageRating} setRating={() => {}} />
+            <div className="flex flex-col  justify-between items-center mb-6">
+              <div className="flex flex-col items-center mb-4 sm:mb-0">
+                <div className="flex flex-row justify-around">
+                  <p className="text-3xl pr-4 -mt-1.5 font-semibold text-gray-800 dark:text-gray-200">{averageRating.toFixed(1)}</p>
+                  <Rating isEditable={false} rating={averageRating} setRating={() => { }} />
+                </div>
+                <p className="text-gray-800 dark:text-gray-200">{reviews.length} reviews</p>
               </div>
-            <p className="text-gray-800 dark:text-gray-200">{reviews.length} reviews</p>
             </div>
-          </div>
 
-          <div className="w-full max-w-xs mb-6">
-            {[5, 4, 3, 2, 1].map(star => renderStarRatingBar(star))}
-          </div>
+            <div className="w-full max-w-xs mb-6">
+              {[5, 4, 3, 2, 1].map(star => renderStarRatingBar(star))}
+            </div>
           </div>
 
           <div className="mt-8 space-x-2 flex flex-wrap">
             {['academic', 'faculty', 'infrastructure', 'accommodation', 'socialLife', 'fee', 'placement', 'food'].map((category) => (
               <button
                 key={category}
-                className={`py-2 px-4 rounded-md mb-2 ${
-                  activeTab === category
-                    ? 'bg-gradient-to-br from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 text-white'
-                    : 'bg-gray-200 dark:bg-zinc-700 text-gray-800 dark:text-gray-200'
-                }`}
+                className={`py-2 px-4 rounded-md mb-2 ${activeTab === category
+                  ? 'bg-gradient-to-br from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 text-white'
+                  : 'bg-gray-200 dark:bg-zinc-700 text-gray-800 dark:text-gray-200'
+                  }`}
                 onClick={() => setActiveTab(category)}
               >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -267,35 +279,33 @@ const View = ({ college }: { college: string }) => {
 
           <div className="mt-8">
             <div className='flex justify-between'>
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
-              {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Reviews
-            </h2>
-            <div className="flex items-center mb-4">
-  <input
-    type="checkbox"
-    id="verifiedOnly"
-    checked={showVerifiedOnly}
-    onChange={(e) => setShowVerifiedOnly(e.target.checked)}
-    className="mr-2 h-5 w-5"
-  />
-  <label htmlFor="verifiedOnly" className="text-gray-800 dark:text-gray-200">
-        Verified Only
-  </label>
-</div>
+              <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Reviews
+              </h2>
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  id="verifiedOnly"
+                  checked={showVerifiedOnly}
+                  onChange={(e) => setShowVerifiedOnly(e.target.checked)}
+                  className="mr-2 h-5 w-5"
+                />
+                <label htmlFor="verifiedOnly" className="text-gray-800 dark:text-gray-200">
+                  Verified Only
+                </label>
+              </div>
 
             </div>
             {renderReviews(activeTab)}
           </div>
 
-          
-
           <div className="mt-8">
-          {collegeInfo && (
-            <div className="mt-8">
-              <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">About {college}</h2>
-              <p className="text-gray-800 dark:text-gray-200">{formatCollegeInfo(collegeInfo)}</p>
-            </div>
-          )}
+            {collegeInfo && (
+              <div className="mt-8">
+                <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">About {college}</h2>
+                <p className="text-gray-800 dark:text-gray-200">{formatCollegeInfo(collegeInfo)}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
