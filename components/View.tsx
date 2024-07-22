@@ -131,12 +131,12 @@ const View = ({ college }: { college: string }) => {
               ],
             },
           ],
-          safetySettings: {
+          safety_settings: {
             [HarmCategory.HARM_CATEGORY_HATE_SPEECH]: HarmBlockThreshold.BLOCK_NONE,
             [HarmCategory.HARM_CATEGORY_HARASSMENT]: HarmBlockThreshold.BLOCK_NONE,
             [HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT]: HarmBlockThreshold.BLOCK_NONE,
             [HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT]: HarmBlockThreshold.BLOCK_NONE,
-          },
+          }
         });
 
         const result = await chat.sendMessage(`Provide a concise, accurate overview of ${college} in a newspaper style. Limit the response to 10 lines and include contact details like the website and email only if you know, if you don't any details leave it don't give a note or disclaimer, just give the details only you know, don't and never add a disclaimer or please note or anything like that. Present the information in separate paragraphs.`);
