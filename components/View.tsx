@@ -225,7 +225,7 @@ const View = ({ college }: { college: string }) => {
             )}
           </div>
           <Rating isEditable={false} rating={ratingValue} setRating={() => { }} />
-          <p className="mt-2 text-gray-800 dark:text-gray-200">
+          <p className="mt-2 text-gray-800 dark:text-gray-200 break-words">
             {isExpanded ? convertNewlinesToBreaks(reviewText) : convertNewlinesToBreaks(reviewText.slice(0, 100))}
             {reviewText.length > 100 && (
               <span
