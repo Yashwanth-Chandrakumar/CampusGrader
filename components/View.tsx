@@ -133,7 +133,7 @@ const View = ({ college }: { college: string }) => {
           ],
         });
 
-        const result = await chat.sendMessage(`Provide a concise and complete overview of ${college} in a newspaper style, without an introduction or title. Ensure the information is accurate and straightforward. If contact details like email or phone number are available and correct, include them. Present the information in separate paragraphs, limiting the response to around 10 lines.`);
+        const result = await chat.sendMessage(`Provide a concise, accurate overview of ${college} in a newspaper style. Limit the response to 10 lines and include contact details like the website, phone number, and email if available. Present the information in separate paragraphs.`);
         const response = result.response;
         setCollegeInfo(response.text());
       } catch (error) {
