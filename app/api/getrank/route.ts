@@ -6,7 +6,7 @@ export async function GET(req:any) {
   try {
     await connectMongoDB();
 
-    // Aggregate to count the number of reviews for each college
+    // Aggregate to count the number of reviews for each college and project the name
     const colleges = await College.aggregate([
       {
         $group: {
@@ -19,6 +19,13 @@ export async function GET(req:any) {
       },
       {
         $limit: 5
+      },
+      {
+        $project: {
+          _id: 0,
+          name: "$_id",
+          totalReviews: 1
+        }
       }
     ]);
 

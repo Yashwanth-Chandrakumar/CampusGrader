@@ -125,7 +125,7 @@ const Landingpage = () => {
           {index}.
         </span>
         <span className={index <3  ? 'text-yellow-500' : 'text-gray-800 dark:text-gray-200'}>
-          {college._id}
+          {college.name}
         </span>
         <span className={index < 3 ? 'text-yellow-500' : 'text-gray-800 dark:text-gray-200'}>
           {college.totalReviews} reviews
