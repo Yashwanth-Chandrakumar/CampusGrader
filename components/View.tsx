@@ -226,7 +226,7 @@ const View = ({ college }: { college: string }) => {
             </div>
             {review.verified && (
               <div>
-                <IconRosetteDiscountCheckFilled color='blue' />
+                <IconRosetteDiscountCheckFilled className='text-blue-500 dark:text-yellow-500' />
               </div>
             )}
           </div>
