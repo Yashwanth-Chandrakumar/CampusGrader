@@ -58,6 +58,14 @@ const calculateAverageRating = (reviews: Review[]): number => {
 
   return totalRatings / reviews.length;
 };
+const convertNewlinesToBreaks = (text: string) => {
+  return text.split('\n').map((line, index) => (
+    <span key={index}>
+      {line}
+      <br />
+    </span>
+  ));
+};
 
 const countStarRatings = (reviews: Review[], star: number): number => {
   return reviews.filter(review =>
@@ -163,14 +171,14 @@ const View = ({ college }: { college: string }) => {
   const renderReviews = (category: string) => {
     const ratingKey = `${category}Rating` as keyof Review;
     const reviewKey = `${category}Review` as keyof Review;
-
+  
     const filteredReviews = reviews.filter(review => {
       if (showVerifiedOnly) {
         return review.verified && review[ratingKey] !== undefined;
       }
       return review[ratingKey] !== undefined;
     });
-
+  
     if (filteredReviews.length === 0) {
       return (
         <p className="text-xl text-center mt-4 dark:text-gray-200">
@@ -184,14 +192,14 @@ const View = ({ college }: { college: string }) => {
         </p>
       );
     }
-
+  
     return filteredReviews.map((review, index) => {
       const reviewDate = formatDistanceToNow(new Date(review.createdAt), { addSuffix: true });
       const ratingValue = typeof review[ratingKey] === 'number' ? review[ratingKey] as number : 0;
       const reviewText = review[reviewKey] as string;
       const isExpanded = expandedReviews[index] || false;
       const toggleExpand = () => setExpandedReviews(prev => ({ ...prev, [index]: !isExpanded }));
-
+  
       return (
         <div key={index} className="mb-4 p-4 bg-gray-100 dark:bg-zinc-700 rounded-lg shadow">
           <div className='flex justify-between'>
@@ -201,19 +209,19 @@ const View = ({ college }: { college: string }) => {
             </div>
             {review.verified && (
               <div>
-                <IconRosetteDiscountCheckFilled color='blue' />
+                <IconRosetteDiscountCheckFilled color='yellow' />
               </div>
             )}
           </div>
           <Rating isEditable={false} rating={ratingValue} setRating={() => { }} />
           <p className="mt-2 text-gray-800 dark:text-gray-200">
-            {isExpanded ? reviewText : `${reviewText.slice(0, 100)}...`}
+            {isExpanded ? convertNewlinesToBreaks(reviewText) : convertNewlinesToBreaks(reviewText.slice(0, 100))}
             {reviewText.length > 100 && (
               <span
                 className="text-blue-500 cursor-pointer"
                 onClick={toggleExpand}
               >
-                {isExpanded ? ' Show less' : 'Show more'}
+                {isExpanded ? ' Show less' : ' View details'}
               </span>
             )}
           </p>
@@ -221,6 +229,7 @@ const View = ({ college }: { college: string }) => {
       );
     });
   };
+  
 
   const renderStarRatingBar = (star: number) => {
     const count = starCounts[star];
