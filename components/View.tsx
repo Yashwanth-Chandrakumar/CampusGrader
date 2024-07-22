@@ -64,7 +64,12 @@ const convertNewlinesToBreaks = (text: string) => {
     <span key={index}>
       {line.split('\t').map((part, tabIndex) => (
         <span key={tabIndex}>
-          {part}
+          {part.split(' ').map((word, spaceIndex) => (
+            <>
+              {spaceIndex > 0 && <span>&nbsp;</span>}
+              {word}
+            </>
+          ))}
           {tabIndex < line.split('\t').length - 1 && <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>}
         </span>
       ))}
