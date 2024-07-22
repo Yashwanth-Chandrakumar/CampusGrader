@@ -211,7 +211,7 @@ const View = ({ college }: { college: string }) => {
 
   const renderStarRatingBar = (star: number) => {
     const count = starCounts[star];
-    const percentage = (count / reviews.length) * 100;
+    const percentage = Math.floor((count / reviews.length) * 100);
 
     return (
       <div className="flex flex-row items-center mb-2" key={star}>
