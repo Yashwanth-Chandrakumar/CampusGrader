@@ -59,9 +59,15 @@ const calculateAverageRating = (reviews: Review[]): number => {
   return totalRatings / reviews.length;
 };
 const convertNewlinesToBreaks = (text: string) => {
-  return text.split('\n').map((line, index) => (
+  const lines = text.split('\n');
+  return lines.map((line, index) => (
     <span key={index}>
-      {line}
+      {line.split('\t').map((part, tabIndex) => (
+        <span key={tabIndex}>
+          {part}
+          {tabIndex < line.split('\t').length - 1 && <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>}
+        </span>
+      ))}
       <br />
     </span>
   ));
