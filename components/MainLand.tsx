@@ -54,7 +54,7 @@ const Landingpage = () => {
   useEffect(() => {
     const fetchMostReviewedColleges = async () => {
       try {
-        const response = await fetch('/api/most-reviewed-colleges');
+        const response = await fetch('/api/getrank');
         const data = await response.json();
         setMostReviewedColleges(data.colleges);
       } catch (error) {
@@ -113,21 +113,30 @@ const Landingpage = () => {
           )}
         </section>
         <section className="mt-5 bg-white dark:bg-zinc-800 rounded-lg shadow-md p-4">
-          <h2 className="text-gray-800 dark:text-gray-200 py-2 font-bold">Most Reviewed Colleges</h2>
-          {mostReviewedColleges.length > 0 ? (
-            mostReviewedColleges.map((college, index) => (
-              <div 
-                key={index} 
-                className={`flex flex-col md:flex-row justify-between items-center text-gray-800 dark:text-gray-200 p-2 ${index === 0 ? 'text-yellow-500' : index === 1 ? 'text-gray-500' : index === 2 ? 'text-orange-700' : ''}`}
-              >
-                <span>{college._id}</span>
-                <span>{college.totalReviews} reviews</span>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-800 dark:text-gray-200">No reviews found</p>
-          )}
-        </section>
+  <h2 className="text-gray-800 dark:text-gray-200 py-2 font-bold">Most Reviewed Colleges</h2>
+  {mostReviewedColleges.length > 0 ? (
+    mostReviewedColleges.map((college, index) => (
+      <div 
+        key={index} 
+        className="flex flex-col md:flex-row justify-between items-center p-2"
+      >
+        
+        <span className={index <3  ? 'text-yellow-500' : 'text-gray-800 dark:text-gray-200'}>
+          {index}.
+        </span>
+        <span className={index <3  ? 'text-yellow-500' : 'text-gray-800 dark:text-gray-200'}>
+          {college._id}
+        </span>
+        <span className={index < 3 ? 'text-yellow-500' : 'text-gray-800 dark:text-gray-200'}>
+          {college.totalReviews} reviews
+        </span>
+      </div>
+    ))
+  ) : (
+    <p className="text-gray-800 dark:text-gray-200">No reviews found</p>
+  )}
+</section>
+
       </div>
     </div>
   );
