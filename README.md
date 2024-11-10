@@ -136,4 +136,3 @@ To run the **CampusGrader** application locally, follow these instructions:
 
 - **Bcrypt**: Passwords are securely hashed using Bcrypt before they are stored in the database.
 - **Authentication**: NextAuth.js provides secure authentication using OAuth services, keeping student login information safe.
-  =
